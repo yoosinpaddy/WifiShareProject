@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_main_switch"
+        android:title="@string/title_connect"
+        app:actionLayout="@layout/main_switch_layout"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_map"
+        android:icon="@drawable/ic_map"
+        android:iconTint="@color/white"
+        android:title="@string/title_connect"
+        app:showAsAction="always" />
+
+</menu>

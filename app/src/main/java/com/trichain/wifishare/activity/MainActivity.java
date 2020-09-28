@@ -10,6 +10,7 @@ import com.trichain.wifishare.R;
 import com.trichain.wifishare.databinding.ActivityMainBinding;
 import com.trichain.wifishare.room.RoomActivity;
 
+/////
 public class MainActivity extends AppCompatActivity {
 
     //Data binding class
@@ -20,7 +21,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         b = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        b.btnRoom.setOnClickListener(v -> startActivity(new Intent(this, RoomActivity.class)));
+        b.btnRoom.setOnClickListener(v -> startActivity(new Intent(this,
+
+
+
+                RoomActivity.class)));
 
     }
 }

@@ -3,23 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_connect">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.trichain.wifishare.activity.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_connect"
+        android:name="com.trichain.wifishare.fragment.ConnectFragment"
+        android:label="@string/title_connect"
+        tools:layout="@layout/fragment_discover" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.trichain.wifishare.activity.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_discover"
+        android:name="com.trichain.wifishare.fragment.DiscoverFragment"
+        android:label="@string/title_discover"
+        tools:layout="@layout/fragment_connect" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.trichain.wifishare.activity.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_more"
+        android:name="com.trichain.wifishare.fragment.MoreFragment"
+        android:label="@string/title_more"
+        tools:layout="@layout/fragment_more" />
+
 </navigation>
