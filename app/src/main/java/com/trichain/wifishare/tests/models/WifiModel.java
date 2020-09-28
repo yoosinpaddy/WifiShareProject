@@ -8,6 +8,9 @@ public class WifiModel {
     Double lat;
     Double longt;
 
+    public WifiModel() {
+    }
+
     public WifiModel(String ssid, String uuid, String password, String security) {
         this.ssid = ssid;
         this.uuid = uuid;
@@ -54,5 +57,17 @@ public class WifiModel {
 
     public void setSecurity(String security) {
         this.security = security;
+    }
+
+    @Override
+    public String toString() {
+        return "WifiModel{" +
+                "ssid='" + ssid + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", password='" + password + '\'' +
+                ", security='" + security + '\'' +
+                ", lat=" + lat +
+                ", longt=" + longt +
+                '}';
     }
 }
