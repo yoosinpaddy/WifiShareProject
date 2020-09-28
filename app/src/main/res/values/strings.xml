@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Code Snippets</string>
+    <string name="app_name">WIFI Share</string>
     <string name="title_activity_home">MainActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
