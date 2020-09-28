@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1070989070355",
+    "firebase_url": "https://wifi-share-e468b.firebaseio.com",
+    "project_id": "wifi-share-e468b",
+    "storage_bucket": "wifi-share-e468b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070989070355:android:29d133702ed068a1202fe6",
+        "android_client_info": {
+          "package_name": "com.trichain.wifishare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1070989070355-8ghe5fv1465c9btvmpck6a0j271poq1t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trichain.wifishare",
+            "certificate_hash": "7a17ce72a44a340f4709c55a914046e5a9a44ff5"
+          }
+        },
+        {
+          "client_id": "1070989070355-2vtb96mlpotghfvaimgeuavchs5sp4u9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoYKGToclplWJ4iz6ynesDaIo3lV64cVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1070989070355-2vtb96mlpotghfvaimgeuavchs5sp4u9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
