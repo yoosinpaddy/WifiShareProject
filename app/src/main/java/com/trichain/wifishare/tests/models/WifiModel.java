@@ -59,6 +59,22 @@ public class WifiModel {
         this.security = security;
     }
 
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLongt() {
+        return longt;
+    }
+
+    public void setLongt(Double longt) {
+        this.longt = longt;
+    }
+
     @Override
     public String toString() {
         return "WifiModel{" +
