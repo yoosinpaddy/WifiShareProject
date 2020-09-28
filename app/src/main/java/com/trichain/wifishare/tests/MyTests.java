@@ -1,5 +1,6 @@
 package com.trichain.wifishare.tests;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.firebase.FirebaseApp;
 import com.trichain.wifishare.R;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
@@ -27,6 +29,7 @@ public class MyTests extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_tests);
         locationProviderClient = getFusedLocationProviderClient(this);
+        requestLocationPermissions();
     }
 
     public void getWifiList(View v){
@@ -39,6 +42,12 @@ public class MyTests extends AppCompatActivity {
     }
     public void addWifi2(View v){
 
+    }
+
+    private void initFirebase() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("userTable");
+// where User is your class and user is it's object with the values you need to update
+        ref.child(user.getNumber()).setValue(user);
     }
 
     public void requestLocationPermissions(){
