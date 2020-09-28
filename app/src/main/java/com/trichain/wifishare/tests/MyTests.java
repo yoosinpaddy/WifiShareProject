@@ -45,9 +45,9 @@ public class MyTests extends AppCompatActivity {
     }
 
     private void initFirebase() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("userTable");
-// where User is your class and user is it's object with the values you need to update
-        ref.child(user.getNumber()).setValue(user);
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("userTable");
+//// where User is your class and user is it's object with the values you need to update
+//        ref.child(user.getNumber()).setValue(user);
     }
 
     public void requestLocationPermissions(){
