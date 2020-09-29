@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.SecurityCheckActivity"></activity>
         <activity
             android:name=".activity.CountrySelectActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -28,7 +29,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".room.RoomActivity" />
-        <activity android:name=".activity.MainActivity"/>
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.SpeedCheckActivity" />
+        <activity android:name=".activity.SignalCheckActivity" />
     </application>
 
 </manifest>

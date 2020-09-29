@@ -27,7 +27,7 @@ android {
     }
 
 
-    buildFeatures{
+    buildFeatures {
         dataBinding = true
     }
 }
@@ -56,6 +56,12 @@ dependencies {
 
     //Material components
     implementation 'com.google.android.material:material:1.2.0'
+
+    // ripple effect
+    implementation 'com.balysv:material-ripple:1.0.2'
+
+    // circle image view
+    implementation 'com.mikhaellopez:circularimageview:3.2.0'
 
     //Retrofit networking library
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'

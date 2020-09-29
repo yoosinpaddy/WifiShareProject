@@ -24,7 +24,7 @@ public class ConnectFragment extends Fragment {
 
         b = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false);
 
-        b.btnSelectCountry.setOnClickListener(v -> {
+        b.btnGetMoreWiFi.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), CountrySelectActivity.class));
         });
 
