@@ -48,7 +48,11 @@ public class ConnectFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         b = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false);
-        b.tvConnectionMessage.setText(getActivity().getString(R.string.connected_to_wifi, CheckConnectivity.getWiFiName(getActivity())));
+        if (!CheckConnectivity.getWiFiName(getActivity()).contains("<unknown ssid>")){
+            b.tvConnectionMessage.setText(getActivity().getString(R.string.connected_to_wifi, CheckConnectivity.getWiFiName(getActivity()).replace("\"","")));
+        }else{
+            b.tvConnectionMessage.setText("No wifi connected");
+        }
         b.tvInternetConnected.setText(CheckConnectivity.isOnline(getContext()) ? "Internet connected" : "No internet connection");
         c=getActivity();
         checkGPSEnabled();
@@ -81,6 +85,7 @@ public class ConnectFragment extends Fragment {
 
             @Override
             public void onSavedWifiResults(List<WifiConfiguration> savedResults) {
+                Log.e(TAG, "onSavedWifiResults: "+savedResults.size() );
                 for (WifiConfiguration a:savedResults
                      ) {
                     if (a.SSID.contentEquals(CheckConnectivity.getWiFiName(getActivity()))){
@@ -92,7 +97,7 @@ public class ConnectFragment extends Fragment {
                         wifiModels.add(new WifiModel(a.SSID));
                     }
                 }
-                freeAdapter.notifyDataSetChanged();
+                Log.e(TAG, "onSavedWifiResults: "+wifiModels.size() );
             }
         });
     }
@@ -105,22 +110,26 @@ public class ConnectFragment extends Fragment {
         activity.getWifiListOffline(new ScanResultsInterface() {
             @Override
             public void onScanResultsAvailable(List<ScanResult> scanResultInterfaces) {
-                List<WifiModel> wifiModels=new ArrayList<>();
+                Log.e(TAG, "onScanResultsAvailable: "+scanResultInterfaces.size() );
+                List<WifiModel> wifiModels2=new ArrayList<>();
                 for (ScanResult a:scanResultInterfaces
                 ) {
                     boolean ispresent=false;
                     for (WifiModel aa:wifiModels
                          ) {
-                        if (aa.getSsid().contentEquals(a.SSID)){
+                        if (aa.getSsid().contentEquals(a.SSID.replace("\"",""))){
                             ispresent=true;
                         }
                     }
+                    wifiModels2.add(new WifiModel(a.SSID.replace("\"","")));
                     if (!ispresent){
                         WifiModel m=new WifiModel();
                         m.setSsid(a.SSID);
-                        wifiModels.add(m);
+                        protectedWifiModels.add(m);
                     }
                 }
+                setUpAgain(wifiModels2);
+                Log.e(TAG, "onScanResultsAvailable: "+protectedWifiModels.size() );
                 nonFreeAdapter.notifyDataSetChanged();
 
             }
@@ -131,11 +140,36 @@ public class ConnectFragment extends Fragment {
         });
     }
 
+    private void setUpAgain(List<WifiModel> protectedWifiModels2) {
+        Log.e(TAG, "setUpAgain: "+protectedWifiModels2.size() );
+        List<WifiModel> wifiModels3=new ArrayList<>();
+        for (WifiModel w:protectedWifiModels2
+             ) {
+            Log.e(TAG, "setUpAgain: "+w.getSsid());
+            boolean isNearBy=false;
+            for (WifiModel wifiModel:wifiModels ) {
+                Log.e(TAG, "setUpAgain: -"+wifiModel.getSsid() );
+                if (w.getSsid().trim().toLowerCase().contentEquals(wifiModel.getSsid().replace("\"","").trim().toLowerCase())){
+                    isNearBy=true;
+                }
+            }
+            if (isNearBy){
+                wifiModels3.add(w);
+            }
+            wifiModels.clear();
+            wifiModels.addAll(wifiModels3);
+            freeAdapter.notifyDataSetChanged();
+
+        }
+    }
+
     private void setUpRecycler() {
         b.recyclerFreeHotspots.setLayoutManager(new LinearLayoutManager(getActivity()));
         freeAdapter = new WifiAdapter(wifiModels,c,R.layout.item_free_wifi,mBehavior,mBottomSheetDialog);
+        b.recyclerFreeHotspots.setAdapter(freeAdapter);
         b.recyclerProtectedHotspots.setLayoutManager(new LinearLayoutManager(getActivity()));
-        freeAdapter = new WifiAdapter(protectedWifiModels,c,R.layout.item_wifi_password_required,mBehavior,mBottomSheetDialog);
+        nonFreeAdapter = new WifiAdapter(protectedWifiModels,c,R.layout.item_wifi_password_required,mBehavior,mBottomSheetDialog);
+        b.recyclerProtectedHotspots.setAdapter(nonFreeAdapter);
     }
 
     private void initBottomSheet() {

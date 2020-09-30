@@ -78,6 +78,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull WifiAdapterViewHolder h, int position) {
+        Log.e(TAG, "onBindViewHolder: " );
         WifiModel w = wifiModels.get(position);
         h.tvSSIDName.setText(w.getSsid());
         getWifiStrengthRealtime(h.imgWiFiItem);//update strength realtime

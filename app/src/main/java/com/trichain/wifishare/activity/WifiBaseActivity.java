@@ -41,13 +41,14 @@ public class WifiBaseActivity extends AppCompatActivity {
     private static final String TAG = "WifiBaseActivity";
     private static final String WIFI_ROOT = "wifi_locations";
     private static final String WIFI_REPORT_ROOT = "wifi_report_locations";
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(WIFI_ROOT);
-    WifiManager wifiManager = (WifiManager) WifiBaseActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+    DatabaseReference ref;
+    WifiManager wifiManager;
     /*location*/
     private static final int PERMISSION_REQUEST_CODE = 987;
     private FusedLocationProviderClient locationProviderClient;
     private WifiManager mWifiManager;
     ScanResultsInterface scanResultsInterfaceListener;
+    ScanResultsInterface savedResultsInterfaceListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +56,8 @@ public class WifiBaseActivity extends AppCompatActivity {
         locationProviderClient = getFusedLocationProviderClient(this);
         requestLocationPermissions();
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager=mWifiManager;
+        ref = FirebaseDatabase.getInstance().getReference().child(WIFI_ROOT);
     }
 
     public boolean isWifiOn() {
@@ -69,7 +72,10 @@ public class WifiBaseActivity extends AppCompatActivity {
             Toast.makeText(this, "Turn wifi on and retry", Toast.LENGTH_SHORT).show();
             return;
         }
+        @SuppressLint("MissingPermission") List<WifiConfiguration> wifiConfigurations = wifiManager.getConfiguredNetworks();
         this.scanResultsInterfaceListener = scanResultsInterfaceListener;
+        this.savedResultsInterfaceListener = scanResultsInterfaceListener;
+        savedResultsInterfaceListener.onSavedWifiResults(wifiConfigurations);
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         i.addAction(WifiManager.ACTION_PICK_WIFI_NETWORK);
         registerReceiver(mWifiScanReceiver,
@@ -95,6 +101,7 @@ public class WifiBaseActivity extends AppCompatActivity {
             } else if (intent.getAction().equals(WifiManager.ACTION_PICK_WIFI_NETWORK)) {
                 Log.e(TAG, "BroadcastReceiver onReceive: ACTION_PICK_WIFI_NETWORK");
                 if (ActivityCompat.checkSelfPermission(WifiBaseActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    Log.e(TAG, "onReceive: permision errors");
                     requestLocationPermissions();
                     return;
                 }
@@ -103,8 +110,8 @@ public class WifiBaseActivity extends AppCompatActivity {
                 ) {
                     Log.e(TAG, "onReceive: " + a.SSID);
                 }
-                if (scanResultsInterfaceListener != null) {
-                    scanResultsInterfaceListener.onSavedWifiResults(mScanResults);
+                if (savedResultsInterfaceListener != null) {
+                    savedResultsInterfaceListener.onSavedWifiResults(mScanResults);
                 }
             }
         }
