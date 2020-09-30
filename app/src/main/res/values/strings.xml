@@ -5,9 +5,10 @@
     <string name="title_refresh">Refresh</string>
     <string name="title_discover">Discover</string>
     <string name="title_more">More</string>
-    <string name="gps_warning">The device location information service is turned of and needs o be turned on before it can be user normally</string>
+    <string name="gps_warning">The device location information service is turned of and needs to be turned on before it can be user normally</string>
     <string name="string_integer">%1$s %2$d</string>
     <string name="string_string">%1$s %2$s</string>
+    <string name="connected_to_wifi">Connected To %1$s</string>
 
     //Firebase account karumajohn
 

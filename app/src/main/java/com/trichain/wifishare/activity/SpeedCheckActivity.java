@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.databinding.ActivitySpeedCheckBinding;
 import com.trichain.wifishare.util.AppExecutors;
+import com.trichain.wifishare.util.CheckConnectivity;
 
 import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.SpeedTestSocket;
@@ -34,11 +35,13 @@ public class SpeedCheckActivity extends AppCompatActivity {
         b = DataBindingUtil.setContentView(this, R.layout.activity_speed_check);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Speed Check");
 
         appExecutors = AppExecutors.getInstance();
 
         speedTestSocket = new SpeedTestSocket();
 
+        b.tvWiFiNameSpeed.setText(CheckConnectivity.getWiFiName(this));
         b.tvDownloadSpeed.setText(getString(R.string.string_string, "Download: ", "0Kbps"));
         b.tvUpSpeed.setText(getString(R.string.string_string, "Upload:   ", "0Kbps"));
 
@@ -135,11 +138,12 @@ public class SpeedCheckActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
-        if (item.getItemId() == R.id.action_refresh){
+        if (item.getItemId() == R.id.action_refresh) {
             startSpeedTest();
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void startSpeedTest() {
 
