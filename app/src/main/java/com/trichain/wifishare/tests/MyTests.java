@@ -22,18 +22,14 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.trichain.wifishare.R;
-import com.trichain.wifishare.tests.models.WifiModel;
+import com.trichain.wifishare.model.WifiModel;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -41,12 +37,11 @@ import java.util.UUID;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class MyTests extends AppCompatActivity {
-
-    private static final int PERMISSION_REQUEST_CODE = 987;
     private static final String TAG = "MyTests";
     private static final String WIFI_ROOT = "wifi_locations";
 
     /*location*/
+    private static final int PERMISSION_REQUEST_CODE = 987;
     private FusedLocationProviderClient locationProviderClient;
     private WifiManager mWifiManager;
 

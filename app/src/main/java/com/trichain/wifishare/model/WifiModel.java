@@ -1,4 +1,4 @@
-package com.trichain.wifishare.tests.models;
+package com.trichain.wifishare.model;
 
 public class WifiModel {
     String ssid;
