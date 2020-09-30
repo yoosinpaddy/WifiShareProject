@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.activity.CountrySelectActivity;
@@ -32,6 +33,7 @@ public class ConnectFragment extends Fragment {
         b = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false);
 
         checkGPSEnabled();
+        initRecycler();
 
         b.btnGetMoreWiFi.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), CountrySelectActivity.class));
@@ -40,6 +42,13 @@ public class ConnectFragment extends Fragment {
         b.fabGPSSettings.setOnClickListener(v -> startGPSIntent());
 
         return b.getRoot();
+    }
+
+    private void initRecycler() {
+        b.recyclerFreeHotspots.setLayoutManager(new LinearLayoutManager(getActivity()));
+        b.recyclerProtectedHotspots.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
     }
 
     public void checkGPSEnabled() {

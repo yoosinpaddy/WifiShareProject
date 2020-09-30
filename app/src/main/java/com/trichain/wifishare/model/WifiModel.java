@@ -7,6 +7,7 @@ public class WifiModel {
     String security;
     Double lat;
     Double longt;
+    boolean isFree;
 
     public WifiModel() {
     }
@@ -25,6 +26,16 @@ public class WifiModel {
         this.security = security;
         this.lat = lat;
         this.longt = longt;
+    }
+
+    public WifiModel(String ssid, String uuid, String password, String security, Double lat, Double longt, boolean isFree) {
+        this.ssid = ssid;
+        this.uuid = uuid;
+        this.password = password;
+        this.security = security;
+        this.lat = lat;
+        this.longt = longt;
+        this.isFree = isFree;
     }
 
     public String getSsid() {
@@ -75,6 +86,14 @@ public class WifiModel {
         this.longt = longt;
     }
 
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public void setFree(boolean free) {
+        isFree = free;
+    }
+
     @Override
     public String toString() {
         return "WifiModel{" +
@@ -86,4 +105,5 @@ public class WifiModel {
                 ", longt=" + longt +
                 '}';
     }
+
 }
