@@ -8,6 +8,8 @@ public class WifiModel {
     Double lat;
     Double longt;
     boolean isFree;
+    boolean isSecured;
+    boolean isConnected;
 
     public WifiModel() {
     }
@@ -28,7 +30,7 @@ public class WifiModel {
         this.longt = longt;
     }
 
-    public WifiModel(String ssid, String uuid, String password, String security, Double lat, Double longt, boolean isFree) {
+    public WifiModel(String ssid, String uuid, String password, String security, Double lat, Double longt, boolean isFree, boolean isSecured) {
         this.ssid = ssid;
         this.uuid = uuid;
         this.password = password;
@@ -36,7 +38,9 @@ public class WifiModel {
         this.lat = lat;
         this.longt = longt;
         this.isFree = isFree;
+        this.isSecured = isSecured;
     }
+
 
     public String getSsid() {
         return ssid;
@@ -92,6 +96,22 @@ public class WifiModel {
 
     public void setFree(boolean free) {
         isFree = free;
+    }
+
+    public boolean isSecured() {
+        return isSecured;
+    }
+
+    public void setSecured(boolean secured) {
+        isSecured = secured;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public void setConnected(boolean connected) {
+        isConnected = connected;
     }
 
     @Override

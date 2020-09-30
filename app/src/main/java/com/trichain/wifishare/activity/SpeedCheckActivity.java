@@ -105,7 +105,7 @@ public class SpeedCheckActivity extends AppCompatActivity {
     private void testDownloadSpeed() {
         Log.e(TAG, "testDownloadSpeed: Attempting to start download ");
         appExecutors.networkIO().execute(() -> {
-            speedTestSocket.startDownload("https://scaleway.testdebit.info/1M/1M.zip");
+            speedTestSocket.startDownload("https://scaleway.testdebit.info/5M/5M.zip",10000);
         });
     }
 
@@ -149,7 +149,7 @@ public class SpeedCheckActivity extends AppCompatActivity {
 
         b.tvDownloadSpeed.setText(getString(R.string.string_string, "Download: ", "0Kbps"));
         b.tvUpSpeed.setText(getString(R.string.string_string, "Upload:   ", "0Kbps"));
-
+isDownloadTest=true;
         testDownloadSpeed();
 
     }

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 public class WifiBaseActivity extends AppCompatActivity {
     private static final String TAG = "WifiBaseActivity";
     private static final String WIFI_ROOT = "wifi_locations";
+    private static final String WIFI_REPORT_ROOT = "wifi_report_locations";
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(WIFI_ROOT);
     WifiManager wifiManager = (WifiManager) WifiBaseActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
     /*location*/
@@ -52,22 +54,27 @@ public class WifiBaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         locationProviderClient = getFusedLocationProviderClient(this);
         requestLocationPermissions();
+        mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
     }
-    public boolean isWifiOn(){
+
+    public boolean isWifiOn() {
         if (wifiManager.isWifiEnabled()) {
             return true;
         }
         return false;
     }
-    public void getWifiListOffline(ScanResultsInterface scanResultsInterfaceListener){
-        if (!isWifiOn()){
+
+    public void getWifiListOffline(ScanResultsInterface scanResultsInterfaceListener) {
+        if (!isWifiOn()) {
             Toast.makeText(this, "Turn wifi on and retry", Toast.LENGTH_SHORT).show();
             return;
         }
-        this.scanResultsInterfaceListener=scanResultsInterfaceListener;
-        mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        this.scanResultsInterfaceListener = scanResultsInterfaceListener;
+        IntentFilter i= new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        i.addAction(WifiManager.ACTION_PICK_WIFI_NETWORK);
         registerReceiver(mWifiScanReceiver,
-                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+                i);
+
         mWifiManager.startScan();
 
     }
@@ -76,12 +83,29 @@ public class WifiBaseActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context c, Intent intent) {
             if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
+                Log.e(TAG, "BroadcastReceiver onReceive: SCAN_RESULTS_AVAILABLE_ACTION" );
                 List<ScanResult> mScanResults = mWifiManager.getScanResults();
-                for (ScanResult a:mScanResults
+                for (ScanResult a : mScanResults
+                ) {
+                    Log.e(TAG, "onReceive: " + a.SSID);
+                }
+                if (scanResultsInterfaceListener != null) {
+                    scanResultsInterfaceListener.onScanResultsAvailable(mScanResults);
+                }
+            }else if (intent.getAction().equals(WifiManager.ACTION_PICK_WIFI_NETWORK)) {
+                Log.e(TAG, "BroadcastReceiver onReceive: ACTION_PICK_WIFI_NETWORK" );
+                if (ActivityCompat.checkSelfPermission(WifiBaseActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestLocationPermissions();
+                    return;
+                }
+                List<WifiConfiguration> mScanResults = mWifiManager.getConfiguredNetworks();
+                for (WifiConfiguration a:mScanResults
                 ) {
                     Log.e(TAG, "onReceive: "+a.SSID );
                 }
-                // add your logic here
+                if (scanResultsInterfaceListener!=null){
+                    scanResultsInterfaceListener.onSavedWifiResults(mScanResults);
+                }
             }
         }
     };
@@ -120,8 +144,8 @@ public class WifiBaseActivity extends AppCompatActivity {
 
     }
     public void requestLocationPermissions(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED&&ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED||ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED||ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.CHANGE_WIFI_STATE},
                     PERMISSION_REQUEST_CODE);
         } else {
             getLastKnownLocation();

@@ -13,6 +13,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.activity.CountrySelectActivity;
 import com.trichain.wifishare.databinding.FragmentConnectBinding;
@@ -25,6 +27,8 @@ public class ConnectFragment extends Fragment {
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 332;
     private static final String TAG = "ConnectFragment";
     private FragmentConnectBinding b;
+    private BottomSheetBehavior mBehavior;
+    private BottomSheetDialog mBottomSheetDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -35,6 +39,7 @@ public class ConnectFragment extends Fragment {
 
         checkGPSEnabled();
         initRecycler();
+        initBottomSheet();
 
         b.btnGetMoreWiFi.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), CountrySelectActivity.class));
@@ -43,6 +48,11 @@ public class ConnectFragment extends Fragment {
         b.fabGPSSettings.setOnClickListener(v -> startGPSIntent());
 
         return b.getRoot();
+    }
+
+    private void initBottomSheet() {
+        mBottomSheetDialog = new BottomSheetDialog(getActivity());
+        mBehavior = BottomSheetBehavior.from(b.bottomSheet);
     }
 
     private void initRecycler() {
