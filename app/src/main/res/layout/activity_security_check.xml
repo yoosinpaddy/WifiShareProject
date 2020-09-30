@@ -1,9 +1,269 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.SecurityCheckActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/rlSecurityScanner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".activity.SecurityCheckActivity">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbarSecurity"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"/>
+
+            <com.trichain.wifishare.views.CircleProgressView
+                android:id="@+id/progressSecurity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                app:anim_progress_color="#77000000"
+                app:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:max="100"
+                app:progress_color="@color/colorPrimaryDark"
+                app:ring_color="@color/colorPrimary" />
+
+            <TextView
+                android:id="@+id/tvSecurityProgress"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/circle_bg_white"
+                android:gravity="center"
+                android:text="40%"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="36sp" />
+
+            <ImageView
+                android:id="@+id/scan1"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_above="@id/tvSecurityProgress"
+                android:layout_centerInParent="true"
+                android:layout_toStartOf="@id/tvSecurityProgress"
+                android:src="@drawable/ic_virus"
+                android:visibility="invisible"
+                app:tint="@color/grey_700" />
+
+            <ImageView
+                android:id="@+id/scan3"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_below="@id/tvSecurityProgress"
+                android:layout_centerInParent="true"
+                android:layout_toEndOf="@id/tvSecurityProgress"
+                android:src="@drawable/ic_virus"
+                android:visibility="invisible"
+                app:tint="@color/white" />
+
+            <ImageView
+                android:id="@+id/scan2"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_below="@id/tvSecurityProgress"
+                android:layout_centerInParent="true"
+                android:layout_toStartOf="@id/tvSecurityProgress"
+                android:src="@drawable/ic_folder"
+                android:visibility="invisible"
+                app:tint="@color/grey_400" />
+
+            <ImageView
+                android:id="@+id/scan4"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:layout_above="@id/tvSecurityProgress"
+                android:layout_centerInParent="true"
+                android:layout_toEndOf="@id/tvSecurityProgress"
+                android:src="@drawable/ic_folder"
+                android:visibility="invisible"
+                app:tint="@color/grey_1000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:drawableTop="@drawable/ic_security"
+                android:text="Secutiry Check"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+
+            <ImageView
+                android:id="@+id/scan5"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_centerInParent="true"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@id/tvSecurityProgress"
+                android:src="@drawable/circle_bg_white"
+                android:visibility="invisible"
+                app:tint="@color/grey_700" />
+
+            <ImageView
+                android:id="@+id/scan6"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="36dp"
+                android:layout_toEndOf="@id/tvSecurityProgress"
+                android:src="@drawable/circle_bg_white"
+                android:visibility="invisible"
+                app:tint="@color/grey_700" />
+
+            <ImageView
+                android:id="@+id/scan7"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_below="@id/tvSecurityProgress"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="36dp"
+                android:src="@drawable/circle_bg_white"
+                android:visibility="invisible"
+                app:tint="@color/grey_700" />
+
+            <ImageView
+                android:id="@+id/scan8"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_above="@id/tvSecurityProgress"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/circle_bg_white"
+                android:visibility="invisible"
+                app:tint="@color/grey_700" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlSecurityResults"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBarSecurity"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:gravity="center_horizontal">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbarSecurity2"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_wifi_secure_signal_fill"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Safe WiFi, enjoy surfing the internet"
+                    android:textColor="@color/white" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/appBarSecurity"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_security"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/black"
+                    android:gravity="center"
+                    android:text="Scan Results"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/scanRes1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableEnd="@drawable/ic_check_circle"
+                    android:drawableTint="@color/green_400"
+                    android:gravity="center_vertical"
+                    android:text="Check if WiFi is encrypted"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/scanRes2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableEnd="@drawable/ic_check_circle"
+                    android:drawableTint="@color/green_400"
+                    android:gravity="center_vertical"
+                    android:text="Check if ARP is abnormal"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/scanRes3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableEnd="@drawable/ic_check_circle"
+                    android:drawableTint="@color/green_400"
+                    android:gravity="center_vertical"
+                    android:text="Check for DNS hijacking"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/scanRes4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableEnd="@drawable/ic_check_circle"
+                    android:drawableTint="@color/green_400"
+                    android:gravity="center_vertical"
+                    android:text="Check for tampered pages"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/scanRes5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableEnd="@drawable/ic_check_circle"
+                    android:drawableTint="@color/green_400"
+                    android:gravity="center_vertical"
+                    android:text="Check for SSL Man-In-The-Middle attack"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/scanRes6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableEnd="@drawable/ic_check_circle"
+                    android:drawableTint="@color/green_400"
+                    android:gravity="center_vertical"
+                    android:text="Check whether it is a phishing WiFi"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

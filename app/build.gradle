@@ -63,6 +63,12 @@ dependencies {
     // circle image view
     implementation 'com.mikhaellopez:circularimageview:3.2.0'
 
+    //Speedometer
+    implementation project(':speedviewlib')
+
+    //SpeedTest
+    implementation 'fr.bmartel:jspeedtest:1.32.1'
+
     //Retrofit networking library
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'

@@ -40,6 +40,22 @@ public class util {
         }
     }
 
+    public static void hideViewInvisible(View v, boolean withAnimation) {
+        if (v.getVisibility() == View.VISIBLE) {
+            if (withAnimation)
+                v.animate()
+                        .alpha(0f)
+                        .setDuration(350)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                v.setVisibility(View.INVISIBLE);
+                            }
+                        });
+            else v.setVisibility(View.INVISIBLE);
+        }
+    }
+
     public static void showView(View v, boolean withAnimation) {
         if (v.getVisibility() == View.GONE || v.getVisibility() == View.INVISIBLE) {
             if (withAnimation) {

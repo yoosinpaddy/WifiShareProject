@@ -1,2 +1,3 @@
+include ':speedviewlib'
 include ':app'
 rootProject.name = "Wifi Share Project"
