@@ -33,6 +33,9 @@ public class SignalCheckActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         b = DataBindingUtil.setContentView(this, R.layout.activity_signal_check);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Signal Strength");
+
         Log.e(TAG, "onCreate: " + CheckConnectivity.getSingleWiFiSignalStrength(this));
 
         b.tvWiFiNameSignal.setText(CheckConnectivity.getWiFiName(this));

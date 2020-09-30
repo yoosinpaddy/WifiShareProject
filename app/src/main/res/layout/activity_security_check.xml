@@ -7,17 +7,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <RelativeLayout
             android:id="@+id/rlSecurityScanner"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:context=".activity.SecurityCheckActivity">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbarSecurity"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"/>
-
 
             <com.trichain.wifishare.views.CircleProgressView
                 android:id="@+id/progressSecurity"
@@ -97,7 +94,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="16dp"
                 android:drawableTop="@drawable/ic_security"
-                android:text="Secutiry Check"
+                android:text="Security Check"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
 
@@ -150,24 +147,21 @@
         <RelativeLayout
             android:id="@+id/rlSecurityResults"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appBarSecurity"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:gravity="center_horizontal">
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbarSecurity2"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize" />
+                android:layout_height="120dp"
+                android:gravity="center">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_marginBottom="16dp"
                     android:src="@drawable/ic_wifi_secure_signal_fill"
                     app:tint="@color/white" />
 

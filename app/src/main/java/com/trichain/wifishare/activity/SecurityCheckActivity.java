@@ -31,6 +31,8 @@ public class SecurityCheckActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         b = DataBindingUtil.setContentView(this, R.layout.activity_security_check);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         initToolBar(0);
 
         timer = new Timer();
@@ -73,8 +75,6 @@ public class SecurityCheckActivity extends AppCompatActivity {
 
 
     private void initToolBar(int which) {
-        setSupportActionBar(which == 0 ? b.toolbarSecurity : b.toolbarSecurity2);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(which == 0 ? "WiFi Security Scan" : "Scan Results");
         getSupportActionBar().setSubtitle(which == 0 ? CheckConnectivity.getWiFiName(this) : "WiFi is secure");
     }
@@ -100,7 +100,7 @@ public class SecurityCheckActivity extends AppCompatActivity {
                 }
 
             }
-        }, 500, 700);
+        }, 1400, 700);
     }
 
 

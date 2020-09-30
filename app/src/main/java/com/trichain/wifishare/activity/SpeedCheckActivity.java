@@ -35,6 +35,7 @@ public class SpeedCheckActivity extends AppCompatActivity {
         b = DataBindingUtil.setContentView(this, R.layout.activity_speed_check);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Speed Check");
 
         appExecutors = AppExecutors.getInstance();
 
@@ -137,7 +138,7 @@ public class SpeedCheckActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
-        if (item.getItemId() == R.id.action_refresh){
+        if (item.getItemId() == R.id.action_refresh) {
             startSpeedTest();
         }
         return super.onOptionsItemSelected(item);
