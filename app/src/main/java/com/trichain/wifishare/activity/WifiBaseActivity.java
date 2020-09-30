@@ -70,7 +70,7 @@ public class WifiBaseActivity extends AppCompatActivity {
             return;
         }
         this.scanResultsInterfaceListener = scanResultsInterfaceListener;
-        IntentFilter i= new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         i.addAction(WifiManager.ACTION_PICK_WIFI_NETWORK);
         registerReceiver(mWifiScanReceiver,
                 i);
@@ -83,7 +83,7 @@ public class WifiBaseActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context c, Intent intent) {
             if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
-                Log.e(TAG, "BroadcastReceiver onReceive: SCAN_RESULTS_AVAILABLE_ACTION" );
+                Log.e(TAG, "BroadcastReceiver onReceive: SCAN_RESULTS_AVAILABLE_ACTION");
                 List<ScanResult> mScanResults = mWifiManager.getScanResults();
                 for (ScanResult a : mScanResults
                 ) {
@@ -92,18 +92,18 @@ public class WifiBaseActivity extends AppCompatActivity {
                 if (scanResultsInterfaceListener != null) {
                     scanResultsInterfaceListener.onScanResultsAvailable(mScanResults);
                 }
-            }else if (intent.getAction().equals(WifiManager.ACTION_PICK_WIFI_NETWORK)) {
-                Log.e(TAG, "BroadcastReceiver onReceive: ACTION_PICK_WIFI_NETWORK" );
+            } else if (intent.getAction().equals(WifiManager.ACTION_PICK_WIFI_NETWORK)) {
+                Log.e(TAG, "BroadcastReceiver onReceive: ACTION_PICK_WIFI_NETWORK");
                 if (ActivityCompat.checkSelfPermission(WifiBaseActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     requestLocationPermissions();
                     return;
                 }
                 List<WifiConfiguration> mScanResults = mWifiManager.getConfiguredNetworks();
-                for (WifiConfiguration a:mScanResults
+                for (WifiConfiguration a : mScanResults
                 ) {
-                    Log.e(TAG, "onReceive: "+a.SSID );
+                    Log.e(TAG, "onReceive: " + a.SSID);
                 }
-                if (scanResultsInterfaceListener!=null){
+                if (scanResultsInterfaceListener != null) {
                     scanResultsInterfaceListener.onSavedWifiResults(mScanResults);
                 }
             }
@@ -120,6 +120,7 @@ public class WifiBaseActivity extends AppCompatActivity {
                     }
                 });
     }
+
     public void getWifiListFromFirebase(ValueEventListener v) {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(WIFI_ROOT);
@@ -143,14 +144,43 @@ public class WifiBaseActivity extends AppCompatActivity {
         });
 
     }
-    public void requestLocationPermissions(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED||ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED||ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.CHANGE_WIFI_STATE},
+
+
+    public void connectToWifi(WifiModel w) {
+        String ssid = w.getSsid();
+        String key = w.getPassword();
+        WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            requestLocationPermissions();
+            return;
+        }
+        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+        for (WifiConfiguration i : list) {
+            if (i.SSID != null && i.SSID.equals("\"" + ssid + "\"")) {
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(i.networkId, true);
+                wifiManager.reconnect();
+                Log.e(TAG, "connectToWifi: " + ssid);
+
+                break;
+            } else {
+                Log.e(TAG, "connectToWifi: non Target: " + ssid);
+            }
+        }
+    }
+
+    public void requestLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CHANGE_WIFI_STATE},
                     PERMISSION_REQUEST_CODE);
         } else {
             getLastKnownLocation();
         }
     }
+
     @SuppressLint("MissingPermission")
     private void getLastKnownLocation() {
         Log.e(TAG, "getLastKnownLocation: called");

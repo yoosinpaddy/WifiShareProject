@@ -1,19 +1,25 @@
 package com.trichain.wifishare.adapter;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,7 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,6 +53,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     List<WifiModel> wifiModels;
     Context c;
     int layout;
+    Dialog dialog;
     private BottomSheetBehavior mBehavior;
     private BottomSheetDialog mBottomSheetDialog;
     private static final String TAG = "WifiAdapter";
@@ -72,112 +81,114 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
         WifiModel w = wifiModels.get(position);
         h.tvSSIDName.setText(w.getSsid());
         getWifiStrengthRealtime(h.imgWiFiItem);//update strength realtime
-        if (w.isConnected()){
-        }else{
+        if (w.isConnected()) {
+        } else {
             h.tvConnectionStatus.setText("");
         }
-        if (w.isSecured()){
+        if (w.isSecured()) {
             h.tvSecurityStatus.setText("Secured");
-        }else{
+        } else {
             h.tvSecurityStatus.setText("Not Secured");
         }
-        h.btnItemMenu.setOnClickListener(v->{showMenu(h,w);});
+        h.btnItemMenu.setOnClickListener(v -> {
+            showMenu(h, w);
+        });
 
     }
 
     private void showMenu(WifiAdapterViewHolder h, WifiModel w) {
-            if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-                mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
+        if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
 
-            final View view = LayoutInflater.from(c).inflate(R.layout.sheet_basic, null);
-            if (!w.isConnected()){
-                (view.findViewById(R.id.llPost)).setVisibility(View.GONE);
-                (view.findViewById(R.id.llSecurity)).setVisibility(View.GONE);
-                (view.findViewById(R.id.llSpeed)).setVisibility(View.GONE);
-                (view.findViewById(R.id.llInvite)).setVisibility(View.GONE);
-                (view.findViewById(R.id.llConnect)).setVisibility(View.GONE);
-            }else{
-                (view.findViewById(R.id.llDisconnect)).setVisibility(View.GONE);
+        final View view = LayoutInflater.from(c).inflate(R.layout.sheet_basic, null);
+        if (!w.isConnected()) {
+            (view.findViewById(R.id.llPost)).setVisibility(View.GONE);
+            (view.findViewById(R.id.llSecurity)).setVisibility(View.GONE);
+            (view.findViewById(R.id.llSpeed)).setVisibility(View.GONE);
+            (view.findViewById(R.id.llInvite)).setVisibility(View.GONE);
+            (view.findViewById(R.id.llConnect)).setVisibility(View.GONE);
+        } else {
+            (view.findViewById(R.id.llDisconnect)).setVisibility(View.GONE);
+        }
+        (view.findViewById(R.id.fabPost)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postFacebook(w);
             }
-            (view.findViewById(R.id.fabPost)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    postFacebook(w);
-                }
-            });
-            (view.findViewById(R.id.fabSecurity)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i=new Intent(c, Security.class);
-                    c.startActivity(i);
-                }
-            });
-            (view.findViewById(R.id.fabSpeed)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i=new Intent(c, SpeedCheckActivity.class);
-                    c.startActivity(i);
-                }
-            });
-            (view.findViewById(R.id.fabInvite)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    inviteNative(w);
-                }
-            });
-            (view.findViewById(R.id.fabSignal)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i=new Intent(c, SignalCheckActivity.class);
-                    i.putExtra("ssid",w.getSsid());
-                    c.startActivity(i);
-                }
-            });
-            (view.findViewById(R.id.fabShare)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    shareInFireBase(w);
-                }
-            });
-            (view.findViewById(R.id.fabReport)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    reportWifi(w);
-                }
-            });
-            (view.findViewById(R.id.forget)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    forget(w);
-                }
-            });
-            (view.findViewById(R.id.disconnect)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    disConnect(w);
-                }
-            });
-            (view.findViewById(R.id.connect)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    connect(w);
-                }
-            });
-
-            mBottomSheetDialog = new BottomSheetDialog(c);
-            mBottomSheetDialog.setContentView(view);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        });
+        (view.findViewById(R.id.fabSecurity)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(c, Security.class);
+                c.startActivity(i);
             }
+        });
+        (view.findViewById(R.id.fabSpeed)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(c, SpeedCheckActivity.class);
+                c.startActivity(i);
+            }
+        });
+        (view.findViewById(R.id.fabInvite)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inviteNative(w);
+            }
+        });
+        (view.findViewById(R.id.fabSignal)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(c, SignalCheckActivity.class);
+                i.putExtra("ssid", w.getSsid());
+                c.startActivity(i);
+            }
+        });
+        (view.findViewById(R.id.fabShare)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareInFireBase(w);
+            }
+        });
+        (view.findViewById(R.id.fabReport)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reportWifi(w);
+            }
+        });
+        (view.findViewById(R.id.forget)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                forget(w);
+            }
+        });
+        (view.findViewById(R.id.disconnect)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disConnect(w);
+            }
+        });
+        (view.findViewById(R.id.connect)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connect(w);
+            }
+        });
 
-            mBottomSheetDialog.show();
-            mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    mBottomSheetDialog = null;
-                }
-            });
+        mBottomSheetDialog = new BottomSheetDialog(c);
+        mBottomSheetDialog.setContentView(view);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
+        mBottomSheetDialog.show();
+        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mBottomSheetDialog = null;
+            }
+        });
 
     }
 
@@ -186,6 +197,83 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     }
 
     private void connect(WifiModel w) {
+        final boolean[] hasConnected = {false};
+        showLoader(true, "Connecting");
+        String ssid = w.getSsid();
+        String key = w.getPassword();
+        WifiManager wifiManager = (WifiManager) c.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            return;
+        }
+        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+        for (WifiConfiguration i : list) {
+            if (i.SSID != null && i.SSID.equals("\"" + ssid + "\"")) {
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(i.networkId, true);
+                wifiManager.reconnect();
+                Log.e(TAG, "connectToWifi: " + ssid);
+
+                break;
+            } else {
+                Log.e(TAG, "connectToWifi: non Target: " + ssid);
+            }
+        }
+        final int[] a = {0};
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                a[0]++;
+                WifiManager wifiManager = (WifiManager) c.getSystemService(Context.WIFI_SERVICE);
+                WifiInfo info = wifiManager.getConnectionInfo();
+                String ssid = info.getSSID();
+                Log.e(TAG, "run: has connected:" + ssid);
+                if (ssid.contentEquals(w.getSsid())) {
+                    hasConnected[0] = true;
+                    showLoader(false);
+                } else {
+                    hasConnected[0] = false;
+                    if (a[0] == 5) {
+                        Toast.makeText(c, "Cant connect to the network", Toast.LENGTH_SHORT).show();
+                    } else {
+                        new Handler().postDelayed(this, 5000);
+
+                    }
+                }
+            }
+        }, 5000);
+    }
+
+    private void showLoader(boolean b, String connecting) {
+        if (!b){
+            if (dialog!=null&&dialog.isShowing()){
+                dialog.dismiss();
+            }
+            return;
+        }
+        final Dialog dialog = new Dialog(c);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.dialog_loading);
+        dialog.setCancelable(true);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+
+        ((TextView) dialog.findViewById(R.id.text_status)).setText(connecting);
+        ((AppCompatButton) dialog.findViewById(R.id.btnDeclineLeadership)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(c.getApplicationContext(), "Declined", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
     }
 
     private void disConnect(WifiModel w) {
@@ -196,6 +284,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
         c.registerReceiver(discon, new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION));
 
     }
+
     public class DisconnectWifi extends BroadcastReceiver {
         WifiManager wifi;
 
@@ -205,18 +294,18 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
 
         @Override
         public void onReceive(Context c, Intent intent) {
-            if(!intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE).toString().equals(SupplicantState.SCANNING))
+            if (!intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE).toString().equals(SupplicantState.SCANNING))
                 wifi.disconnect();
             showLoader(false);
         }
     }
 
     private void forget(WifiModel wifiModel) {
-        WifiManager manager=((WifiManager) c.getSystemService(Context.WIFI_SERVICE));
+        WifiManager manager = ((WifiManager) c.getSystemService(Context.WIFI_SERVICE));
         @SuppressLint("MissingPermission") List<WifiConfiguration> list = manager.getConfiguredNetworks();
-        for( WifiConfiguration i : list ) {
-            if (i.SSID.contentEquals(wifiModel.getSsid())){
-                Log.e(TAG, "forget: "+wifiModel.getSsid() );
+        for (WifiConfiguration i : list) {
+            if (i.SSID.contentEquals(wifiModel.getSsid())) {
+                Log.e(TAG, "forget: " + wifiModel.getSsid());
                 manager.removeNetwork(i.networkId);
                 manager.saveConfiguration();
             }
@@ -245,6 +334,33 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     }
 
     private void showLoader(boolean b) {
+        if (!b){
+            if (dialog!=null&&dialog.isShowing()){
+                dialog.dismiss();
+            }
+            return;
+        }
+        dialog = new Dialog(c);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.dialog_loading);
+        dialog.setCancelable(true);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+
+        ((TextView) dialog.findViewById(R.id.text_status)).setText("Connecting...");
+        ((AppCompatButton) dialog.findViewById(R.id.btnDeclineLeadership)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(c.getApplicationContext(), "Declined", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
 
     }
 
@@ -268,7 +384,8 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
 
     }
 
-    private void inviteNative(WifiModel wifiModel) {Intent intent = new Intent();
+    private void inviteNative(WifiModel wifiModel) {
+        Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
 
 //# change the type of data you need to share,
@@ -287,17 +404,18 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     }
 
     class WifiAdapterViewHolder extends RecyclerView.ViewHolder {
-        TextView tvSSIDName,tvSecurityStatus,tvConnectionStatus;
-        ImageView imgWiFiItem,btnItemMenu;
+        TextView tvSSIDName, tvSecurityStatus, tvConnectionStatus;
+        ImageView imgWiFiItem, btnItemMenu;
         LinearLayout ll_security_connection;
+
         public WifiAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvSSIDName=itemView.findViewById(R.id.tvSSIDName);
-            ll_security_connection=itemView.findViewById(R.id.ll_security_connection);
-            imgWiFiItem=itemView.findViewById(R.id.imgWiFiItem);
-            tvSecurityStatus=itemView.findViewById(R.id.tvSecurityStatus);
-            tvConnectionStatus=itemView.findViewById(R.id.tvConnectionStatus);
-            btnItemMenu=itemView.findViewById(R.id.btnItemMenu);
+            tvSSIDName = itemView.findViewById(R.id.tvSSIDName);
+            ll_security_connection = itemView.findViewById(R.id.ll_security_connection);
+            imgWiFiItem = itemView.findViewById(R.id.imgWiFiItem);
+            tvSecurityStatus = itemView.findViewById(R.id.tvSecurityStatus);
+            tvConnectionStatus = itemView.findViewById(R.id.tvConnectionStatus);
+            btnItemMenu = itemView.findViewById(R.id.btnItemMenu);
         }
     }
 }

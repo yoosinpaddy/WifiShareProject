@@ -21,13 +21,15 @@
         <activity
             android:name=".activity.CountrySelectActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".tests.MyTests" />
-        <activity android:name=".activity.HomeActivity">
+        <activity android:name=".tests.MyTests" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activity.HomeActivity">
         </activity>
         <activity android:name=".room.RoomActivity" />
         <activity android:name=".activity.MainActivity" />

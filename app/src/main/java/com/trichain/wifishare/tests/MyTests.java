@@ -95,9 +95,29 @@ public class MyTests extends AppCompatActivity {
     public void connectToWifi(View v) {
         String ssid = "LYNAS 2";
         String key = "mash@2020";
+        WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            requestLocationPermissions();
+            return;
+        }
+        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+        for( WifiConfiguration i : list ) {
+            if(i.SSID != null && i.SSID.equals("\"" + ssid + "\"")) {
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(i.networkId, true);
+                wifiManager.reconnect();
+                Log.e(TAG, "connectToWifi: "+ssid );
 
-        try {
+                break;
+            }else {
+                Log.e(TAG, "connectToWifi: non Target: "+ssid );
+            }
+        }
+
+       /* try {
             WifiConfiguration conf = new WifiConfiguration();
             conf.SSID = "\"" + ssid + "\"";   // Please note the quotes. String should contain SSID in quotes
 
@@ -112,7 +132,6 @@ public class MyTests extends AppCompatActivity {
 
             Log.d("connecting", conf.SSID + " " + conf.preSharedKey);
 
-            WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             wifiManager.addNetwork(conf);
 
             Log.d("after connecting", conf.SSID + " " + conf.preSharedKey);
@@ -135,7 +154,7 @@ public class MyTests extends AppCompatActivity {
             //WiFi Connection success, return true
         } catch (Exception ex) {
             System.out.println(Arrays.toString(ex.getStackTrace()));
-        }
+        }*/
 //        WifiConfiguration conf = new WifiConfiguration();
 //        conf.SSID = "\"" + ssid + "\"";
 //        conf.preSharedKey = "\""+ key +"\"";

@@ -14,6 +14,12 @@ public class WifiModel {
     public WifiModel() {
     }
 
+    public WifiModel(String ssid) {
+        this.ssid = ssid;
+        isFree=true;
+        isConnected=false;
+        isSecured=true;
+    }
     public WifiModel(String ssid, String uuid, String password, String security) {
         this.ssid = ssid;
         this.uuid = uuid;

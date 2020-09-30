@@ -15,7 +15,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.trichain.wifishare.R;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends WifiBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
