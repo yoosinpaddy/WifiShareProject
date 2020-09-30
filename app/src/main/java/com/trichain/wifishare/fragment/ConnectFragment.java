@@ -1,11 +1,9 @@
 package com.trichain.wifishare.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.activity.CountrySelectActivity;
 import com.trichain.wifishare.databinding.FragmentConnectBinding;
+import com.trichain.wifishare.util.CheckConnectivity;
 import com.trichain.wifishare.util.util;
 
 
@@ -30,6 +29,8 @@ public class ConnectFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         b = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false);
+        b.tvConnectionMessage.setText(getActivity().getString(R.string.connected_to_wifi, CheckConnectivity.getWiFiName(getActivity())));
+        b.tvInternetConnected.setText(CheckConnectivity.isOnline(getContext()) ? "Internet connected" : "No internet connection");
 
         checkGPSEnabled();
 

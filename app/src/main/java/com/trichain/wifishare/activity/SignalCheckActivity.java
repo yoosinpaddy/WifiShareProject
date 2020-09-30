@@ -3,7 +3,12 @@ package com.trichain.wifishare.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
@@ -18,7 +23,7 @@ public class SignalCheckActivity extends AppCompatActivity {
 
     private ActivitySignalCheckBinding b;
     private static final String TAG = "SignalCheckActivity";
-    private static final float MAX_STRENGTH = 5.0f;
+    private static final float MAX_STRENGTH = 4.0f;
     private Timer timer;
     private int connectionStrength = 0;
     private float percent = 0;
@@ -29,6 +34,8 @@ public class SignalCheckActivity extends AppCompatActivity {
         b = DataBindingUtil.setContentView(this, R.layout.activity_signal_check);
 
         Log.e(TAG, "onCreate: " + CheckConnectivity.getSingleWiFiSignalStrength(this));
+
+        b.tvWiFiNameSignal.setText(CheckConnectivity.getWiFiName(this));
 
         startConnectionLoop();
 
@@ -53,6 +60,44 @@ public class SignalCheckActivity extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             timer.cancel();
-        }, 10000);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Scan Finished", Toast.LENGTH_LONG).show();
+            });
+        }, 60000);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_speed_test, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        if (item.getItemId() == R.id.action_refresh) {
+            startConnectionLoop();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        super.onBackPressed();
+    }
+
+
+    @Override
+    protected void onPause() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        super.onPause();
     }
 }

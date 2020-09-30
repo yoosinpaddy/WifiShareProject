@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.databinding.ActivitySecurityCheckBinding;
+import com.trichain.wifishare.util.CheckConnectivity;
 import com.trichain.wifishare.util.util;
 
 import java.util.Random;
@@ -30,7 +31,7 @@ public class SecurityCheckActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         b = DataBindingUtil.setContentView(this, R.layout.activity_security_check);
 
-        initTooBar(0);
+        initToolBar(0);
 
         timer = new Timer();
 
@@ -71,11 +72,11 @@ public class SecurityCheckActivity extends AppCompatActivity {
     }
 
 
-    private void initTooBar(int which) {
+    private void initToolBar(int which) {
         setSupportActionBar(which == 0 ? b.toolbarSecurity : b.toolbarSecurity2);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(which == 0 ? "WiFi Security Scan" : "Scan Results");
-        getSupportActionBar().setSubtitle(which == 0 ? /*TODO: Wifi Name here*/"Social Network" : "WiFi is secure");
+        getSupportActionBar().setSubtitle(which == 0 ? CheckConnectivity.getWiFiName(this) : "WiFi is secure");
     }
 
 
@@ -114,7 +115,7 @@ public class SecurityCheckActivity extends AppCompatActivity {
             }
         }, 1250);
 
-        initTooBar(1);
+        initToolBar(1);
     }
 
     private void toggleItemVisibility(View item, boolean isComplete) {
@@ -146,5 +147,14 @@ public class SecurityCheckActivity extends AppCompatActivity {
             timer.cancel();
         }
         super.onBackPressed();
+    }
+
+
+    @Override
+    protected void onPause() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        super.onPause();
     }
 }

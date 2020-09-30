@@ -8,13 +8,29 @@
         android:layout_height="match_parent"
         tools:context=".activity.SecurityCheckActivity">
 
+        <TextView
+            android:id="@+id/tvWiFiNameSignal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:drawableStart="@drawable/ic_signal"
+            android:drawablePadding="8dp"
+            android:text="WiFi Name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_constraintBottom_toTopOf="@id/awesomeSpeedometer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <com.github.anastr.speedviewlib.AwesomeSpeedometer
             android:id="@+id/awesomeSpeedometer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/llSignalMessage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvWiFiNameSignal"
             app:layout_constraintTop_toTopOf="parent"
             app:sv_backgroundCircleColor="@color/colorPrimary"
             app:sv_indicatorColor="@color/white"
@@ -30,6 +46,32 @@
             app:sv_trianglesColor="@color/white"
             app:sv_unit=""
             app:sv_unitTextColor="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/llSignalMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/awesomeSpeedometer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detecting signal strength..."
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please move around to find the strongest connection spot"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@color/grey_400" />
+        </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

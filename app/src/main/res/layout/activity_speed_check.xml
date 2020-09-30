@@ -8,6 +8,21 @@
         android:layout_height="match_parent"
         tools:context=".activity.SecurityCheckActivity">
 
+        <TextView
+            android:id="@+id/tvWiFiNameSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:drawableStart="@drawable/ic_signal"
+            android:drawablePadding="8dp"
+            android:text="WiFi Name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_constraintBottom_toTopOf="@id/speedView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
         <com.github.anastr.speedviewlib.SpeedView
             android:id="@+id/speedView"
             android:layout_width="wrap_content"

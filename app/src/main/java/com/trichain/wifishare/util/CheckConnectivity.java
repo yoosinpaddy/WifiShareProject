@@ -42,7 +42,7 @@ public class CheckConnectivity {
     }
 
     /*Check if can actually connect to the internet*/
-    public boolean isOnline() {
+    public static boolean isOnline(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -55,5 +55,11 @@ public class CheckConnectivity {
         int numberOfLevels = 5;
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         return WifiManager.calculateSignalLevel(wifiInfo.getRssi(), numberOfLevels);
+    }
+
+    public static String getWiFiName(Context context) {
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        return wifiInfo.getSSID();
     }
 }
