@@ -1,15 +1,18 @@
 package com.trichain.wifishare.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,8 +22,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.textfield.TextInputEditText;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.activity.HomeActivity;
+import com.trichain.wifishare.activity.MapsActivity;
 import com.trichain.wifishare.adapter.WifiAdapter;
 import com.trichain.wifishare.databinding.FragmentConnectBinding;
 import com.trichain.wifishare.listeners.ScanResultsInterface;
@@ -66,6 +73,7 @@ public class ConnectFragment extends Fragment {
         initRecycler();
         initBottomSheet();
         setUpRecycler();
+        setUpMapListener();
 
         /*getFreeHotSpots();
 
@@ -74,6 +82,12 @@ public class ConnectFragment extends Fragment {
         b.fabGPSSettings.setOnClickListener(v -> startGPSIntent());
 
         return b.getRoot();
+    }
+
+    private void setUpMapListener() {
+        b.mapRipple.setOnClickListener(v->{
+            startActivity(new Intent(getActivity(), MapsActivity.class));
+        });
     }
 
     private void getFreeHotSpots() {
@@ -85,12 +99,15 @@ public class ConnectFragment extends Fragment {
         activity.getWifiListOffline(new ScanResultsInterface() {
             @Override
             public void onScanResultsAvailable(List<ScanResult> scanResultInterfaces) {
+                Log.e(TAG, "getFreeHotSpots onScanResultsAvailable: " + scanResultInterfaces.size());
 
             }
 
             @Override
             public void onSavedWifiResults(List<WifiConfiguration> savedResults) {
+                Log.e(TAG, "onSavedWifiResults: before clear");
                 wifiModels.clear();
+                Log.e(TAG, "onSavedWifiResults: after clear");
                 Log.e(TAG, "onSavedWifiResults: " + savedResults.size());
                 for (WifiConfiguration a : savedResults) {
                     if (a.SSID.contentEquals(CheckConnectivity.getWiFiName(getActivity()))) {
@@ -102,6 +119,7 @@ public class ConnectFragment extends Fragment {
                         wifiModels.add(new WifiModel(a.SSID));
                     }
                 }
+                getNonFreeHotSpots();
                 Log.e(TAG, "onSavedWifiResults: " + wifiModels.size());
             }
         });
@@ -119,35 +137,63 @@ public class ConnectFragment extends Fragment {
                 getActivity().runOnUiThread(() -> {
                     util.hideView(b.pbProtectedWifi, true);
                 });
-                Log.e(TAG, "onScanResultsAvailable: " + scanResultInterfaces.size());
+                Log.e(TAG, "getNonFreeHotSpots onScanResultsAvailable: " + scanResultInterfaces.size());
                 protectedWifiModels.clear();
                 List<WifiModel> wifiModels2 = new ArrayList<>();
                 for (ScanResult a : scanResultInterfaces) {
                     boolean ispresent = false;
                     for (WifiModel aa : wifiModels) {
-                        if (aa.getSsid().contentEquals(a.SSID.replace("\"", ""))) {
+                        String mySSID = aa.getSsid().replace("\"", "");
+                        if (a.SSID.contains(mySSID)) {
+//                            Log.e(TAG, "GetNonFreeHotSpots: Does Not:  if:"+mySSID+":"+a.SSID);
                             ispresent = true;
+                        } else {
+//                            Log.e(TAG, "GetNonFreeHotSpots: Does Not:else:"+mySSID+":"+a.SSID);
                         }
                     }
-                    wifiModels2.add(new WifiModel(a.SSID.replace("\"", "")));
                     if (!ispresent) {
+                        Log.e(TAG, "protectedWifiModels: if:" + a.SSID);
                         WifiModel m = new WifiModel();
                         m.setSsid(a.SSID);
                         m.setSecured(a.capabilities.contains("WPA2-PSK") || a.capabilities.contains("WPA-PSK"));
-                        Log.e(TAG, "getWifiListOffline: Comparing: " + a.SSID + " with: " + CheckConnectivity.getWiFiName(activity).replace("\"", ""));
-                        Log.e(TAG, "getWifiListOffline: isConnected to: " + a.SSID + " = " +
-                                a.SSID.toLowerCase().contentEquals(CheckConnectivity.getWiFiName(activity).replace("\"", "").toLowerCase()));
+//                        Log.e(TAG, "getWifiListOffline: Comparing: " + a.SSID + " with: " + CheckConnectivity.getWiFiName(activity).replace("\"", ""));
+//                        Log.e(TAG, "getWifiListOffline: isConnected to: " + a.SSID + " = " +
+                        a.SSID.toLowerCase().contentEquals(CheckConnectivity.getWiFiName(activity).replace("\"", "").toLowerCase());
                         boolean isConnected = a.SSID.toLowerCase().contentEquals(CheckConnectivity.getWiFiName(activity).replace("\"", "").toLowerCase());
                         m.setConnected(isConnected);
                         m.setLevel(a.level);
                         Log.e(TAG, "onScanResultsAvailable: current model connected " + m.getSsid() + " = " + m.isConnected());
                         protectedWifiModels.add(m);
+                    } else {
+                        Log.e(TAG, "protectedWifiModels:else:" + a.SSID);
+                        Log.e(TAG, "onScanResultsAvailable: ");
+                        WifiModel m = new WifiModel();
+                        m.setSsid(a.SSID);
+                        m.setSecured(a.capabilities.contains("WPA2-PSK") || a.capabilities.contains("WPA-PSK"));
+//                        Log.e(TAG, "getWifiListOffline: Comparing: " + a.SSID + " with: " + CheckConnectivity.getWiFiName(activity).replace("\"", ""));
+//                        Log.e(TAG, "getWifiListOffline: isConnected to: " + a.SSID + " = " +
+                        a.SSID.toLowerCase().contentEquals(CheckConnectivity.getWiFiName(activity).replace("\"", "").toLowerCase());
+                        boolean isConnected = a.SSID.toLowerCase().contentEquals(CheckConnectivity.getWiFiName(activity).replace("\"", "").toLowerCase());
+                        m.setConnected(isConnected);
+                        m.setLevel(a.level);
+                        Log.e(TAG, "onScanResultsAvailable: current model connected " + m.getSsid() + " = " + m.isConnected());
+                        wifiModels2.add(m);
                     }
                 }
-                //setUpAgain(wifiModels2);
-                setUpAgain(protectedWifiModels);
-                Log.e(TAG, "onScanResultsAvailable: " + protectedWifiModels.size());
+
+
+                wifiModels.clear();
+                wifiModels.addAll(wifiModels2);
+                Log.e(TAG, "wifiModels: " + wifiModels.size());
+                Log.e(TAG, "protectedWifiModels: " + protectedWifiModels.size());
+                getActivity().runOnUiThread(() -> {
+                    util.hideView(b.pbFreeWifi, true);
+                });
                 nonFreeAdapter.notifyDataSetChanged();
+                freeAdapter.notifyDataSetChanged();
+                //setUpAgain(wifiModels2);
+//                setUpAgain(protectedWifiModels);
+//                Log.e(TAG, "onScanResultsAvailable: protectedWifiModels:" + protectedWifiModels.size());
 
             }
 
@@ -161,9 +207,11 @@ public class ConnectFragment extends Fragment {
         Log.e(TAG, "setUpAgain: " + protectedWifiModels2.size());
         Log.e(TAG, "setUpAgain: List of available WiFi " + protectedWifiModels2.toString());
         List<WifiModel> wifiModels3 = new ArrayList<>();
+
         for (WifiModel w : protectedWifiModels2) {
             Log.e(TAG, "setUpAgain Selected: " + w.getSsid());
             boolean isNearBy = false;
+
             for (WifiModel wifiModel : wifiModels) {
                 //Log.e(TAG, "setUpAgain: -" + wifiModel.getSsid());
                 Log.e(TAG, "setUpAgain: Comparing: " + w.getSsid() + " with: " + wifiModel.getSsid());
@@ -181,12 +229,10 @@ public class ConnectFragment extends Fragment {
 
         }
 
-        getActivity().runOnUiThread(() -> {
-            util.hideView(b.pbFreeWifi, true);
-        });
 
         wifiModels.clear();
         wifiModels.addAll(wifiModels3);
+        nonFreeAdapter.notifyDataSetChanged();
         freeAdapter.notifyDataSetChanged();
 
     }
@@ -199,10 +245,67 @@ public class ConnectFragment extends Fragment {
         nonFreeAdapter = new WifiAdapter(protectedWifiModels, c, R.layout.item_wifi_password_required, mBehavior, mBottomSheetDialog);
         b.recyclerProtectedHotspots.setAdapter(nonFreeAdapter);
 
+        freeAdapter.setWiFiSelectionListener(new WifiAdapter.WiFiSelectionListener() {
+            @Override
+            public void onWiFiSelected(WifiModel wifiModel, int position) {
+                if (!wifiModel.isConnected()) showConnectDialog(wifiModel, position);
+            }
+        });
+
+        nonFreeAdapter.setWiFiSelectionListener(new WifiAdapter.WiFiSelectionListener() {
+            @Override
+            public void onWiFiSelected(WifiModel wifiModel, int position) {
+                showConnectDialog(wifiModel, position);
+            }
+        });
+
         util.showView(b.pbFreeWifi, true);
         util.showView(b.pbProtectedWifi, true);
 
         startRunnables();
+
+    }
+
+    private void showConnectDialog(WifiModel wifiModel, int position) {
+        AlertDialog.Builder b = new AlertDialog.Builder(getContext());
+        View root = LayoutInflater.from(getContext()).inflate(R.layout.dialog_connect_to_wifi, null);
+        TextInputEditText edtPassword = root.findViewById(R.id.edtConnectPassword);
+        MaterialCheckBox checkBox = root.findViewById(R.id.cbxShareConnect);
+        TextView tvWifiNameConnectDialog = root.findViewById(R.id.tvWifiNameConnectDialog);
+
+        tvWifiNameConnectDialog.setText(wifiModel.getSsid());
+
+        b.setPositiveButton("Connect", (dialogInterface, i) -> {
+            String password = edtPassword.getText().toString().trim();
+            if (!TextUtils.isEmpty(password)) {
+                wifiModel.setPassword(password);
+                connectToWiFi(checkBox, wifiModel);
+            } else {
+                edtPassword.setError("Password is required");
+                edtPassword.requestFocus();
+            }
+        });
+        b.setNegativeButton("Cancel", (dialogInterface, i) -> {
+            dialogInterface.cancel();
+        });
+
+        b.setView(root);
+        b.show();
+
+    }
+
+    private void connectToWiFi(MaterialCheckBox checkBox, WifiModel wifiModel) {
+        HomeActivity activity = ((HomeActivity) getActivity());
+        if (activity == null) {
+            Log.e(TAG, "connectToWiFi: activity is null");
+            return;
+        }
+        activity.connectToNewWifi(wifiModel);
+
+        if (checkBox.isChecked()) {
+            activity.addWifiToFirebase(wifiModel.getSsid(), wifiModel.getPassword());
+        }
+
 
     }
 
@@ -215,15 +318,15 @@ public class ConnectFragment extends Fragment {
             public void run() {
                 getFreeHotSpots();
             }
-        }, 600, 2000);
+        }, 600, 5000);
 
         timerSecure = new Timer();
         timerSecure.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                getNonFreeHotSpots();
+//                getNonFreeHotSpots();
             }
-        }, 1000, 2000);
+        }, 1600, 5000);
     }
 
     @Override

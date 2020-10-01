@@ -90,6 +90,9 @@ public class WifiModel {
     }
 
     public Double getLat() {
+        if (lat==null){
+            return (double)0;
+        }
         return lat;
     }
 
@@ -98,6 +101,9 @@ public class WifiModel {
     }
 
     public Double getLongt() {
+        if (longt==null){
+            return (double)0;
+        }
         return longt;
     }
 

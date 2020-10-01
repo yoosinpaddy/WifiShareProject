@@ -20,7 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +44,7 @@ public class WifiBaseActivity extends AppCompatActivity {
     private static final String WIFI_REPORT_ROOT = "wifi_report_locations";
     DatabaseReference ref;
     WifiManager wifiManager;
+    LatLng currentLocation;
     /*location*/
     private static final int PERMISSION_REQUEST_CODE = 987;
     private FusedLocationProviderClient locationProviderClient;
@@ -52,6 +55,7 @@ public class WifiBaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentLocation = new LatLng(0, 0);
         locationProviderClient = getFusedLocationProviderClient(this);
         requestLocationPermissions();
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -68,7 +72,12 @@ public class WifiBaseActivity extends AppCompatActivity {
 
     public void getWifiListOffline(ScanResultsInterface scanResultsInterfaceListener) {
         if (!isWifiOn()) {
-            Toast.makeText(this, "Turn wifi on and retry", Toast.LENGTH_SHORT).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(WifiBaseActivity.this, "Turn wifi on and retry", Toast.LENGTH_SHORT).show();
+                }
+            });
             return;
         }
         @SuppressLint("MissingPermission") List<WifiConfiguration> wifiConfigurations = wifiManager.getConfiguredNetworks();
@@ -76,7 +85,7 @@ public class WifiBaseActivity extends AppCompatActivity {
         this.savedResultsInterfaceListener = scanResultsInterfaceListener;
         savedResultsInterfaceListener.onSavedWifiResults(wifiConfigurations);
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        i.addAction(WifiManager.ACTION_PICK_WIFI_NETWORK);
+//        i.addAction(WifiManager.ACTION_PICK_WIFI_NETWORK);
         registerReceiver(mWifiScanReceiver, i);
 
         mWifiManager.startScan();
@@ -95,6 +104,8 @@ public class WifiBaseActivity extends AppCompatActivity {
                 }
                 if (scanResultsInterfaceListener != null) {
                     scanResultsInterfaceListener.onScanResultsAvailable(mScanResults);
+                } else {
+                    Log.e(TAG, "onReceive: interface is null");
                 }
             } else if (intent.getAction().equals(WifiManager.ACTION_PICK_WIFI_NETWORK)) {
                 Log.e(TAG, "BroadcastReceiver onReceive: ACTION_PICK_WIFI_NETWORK");
@@ -116,14 +127,37 @@ public class WifiBaseActivity extends AppCompatActivity {
     };
 
     public void addWifiToFirebase(String SSID, String password) {
+        getLastKnownLocation();
         String id = UUID.randomUUID().toString();
-        ref.child(id).setValue(new WifiModel(SSID, id, password, "WPA", 1.222, 1.4544))
+        int a = 0;
+        while (currentLocation.latitude == 0) {
+            if (a < 10000) {
+                getLastKnownLocation();
+            }
+            a++;
+        }
+        ref.child(id).setValue(new WifiModel(SSID, id, password, "WPA", currentLocation.latitude, currentLocation.longitude))
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.e(TAG, "onComplete: " + task.toString());
                     }
                 });
+    }
+
+    public void addWifiToFirebase(String SSID, String password, OnCompleteListener listener, OnFailureListener onFailureListener) {
+        getLastKnownLocation();
+        String id = UUID.randomUUID().toString();
+        int a = 0;
+        while (currentLocation.latitude == 0) {
+            if (a < 10000) {
+                getLastKnownLocation();
+            }
+            a++;
+        }
+        ref.child(id).setValue(new WifiModel(SSID, id, password, "WPA", currentLocation.latitude, currentLocation.longitude))
+                .addOnCompleteListener(listener)
+                .addOnFailureListener(onFailureListener);
     }
 
     public void getWifiListFromFirebase(ValueEventListener v) {
@@ -150,11 +184,66 @@ public class WifiBaseActivity extends AppCompatActivity {
 
     }
 
+    public void turnOnWIFI() {
+        wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+    }
+
+    public void turnOffWIFI() {
+        wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(false);
+    }
+
 
     public void connectToWifi(WifiModel w) {
         String ssid = w.getSsid();
         String key = w.getPassword();
         WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            requestLocationPermissions();
+            return;
+        }
+        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+        for (WifiConfiguration i : list) {
+            if (i.SSID != null && i.SSID.equals("\"" + ssid + "\"")) {
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(i.networkId, true);
+                wifiManager.reconnect();
+                Log.e(TAG, "connectToWifi: " + ssid);
+
+                break;
+            } else {
+                Log.e(TAG, "connectToWifi: non Target: " + ssid);
+            }
+        }
+    }
+
+    public void connectToNewWifi(WifiModel w) {
+        String ssid = w.getSsid();
+        String key = w.getPassword();
+        WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        WifiConfiguration conf = new WifiConfiguration();
+        conf.SSID = "\"" + ssid + "\"";   // Please note the quotes. String should contain SSID in quotes
+
+        conf.preSharedKey = "\"" + key + "\"";
+
+        conf.status = WifiConfiguration.Status.ENABLED;
+        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+
+        Log.d("connecting", conf.SSID + " " + conf.preSharedKey);
+
+        wifiManager.addNetwork(conf);
+
+        Log.d("after connecting", conf.SSID + " " + conf.preSharedKey);
+
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -198,7 +287,7 @@ public class WifiBaseActivity extends AppCompatActivity {
         locationProviderClient.getLastLocation()
                 .addOnSuccessListener(location -> {
                     if (location != null) {
-
+                        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
                         Log.e(TAG, "getLastKnownLocation: current location: " + location.getLatitude() + ", " + location.getLongitude());
                     } else {
@@ -210,7 +299,11 @@ public class WifiBaseActivity extends AppCompatActivity {
 
     public void unregisterReceivers() {
         if (mWifiScanReceiver != null) {
-            unregisterReceiver(mWifiScanReceiver);
+            try {
+                unregisterReceiver(mWifiScanReceiver);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

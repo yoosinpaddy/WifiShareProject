@@ -165,6 +165,7 @@
                                     tools:listitem="@layout/item_wifi_password_required" />
 
                                 <com.balysv.materialripple.MaterialRippleLayout
+                                   android:id="@+id/mapRipple"
                                     style="@style/RippleStyleDark"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"

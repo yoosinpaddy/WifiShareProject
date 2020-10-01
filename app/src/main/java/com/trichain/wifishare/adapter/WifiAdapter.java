@@ -40,6 +40,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.trichain.wifishare.R;
+import com.trichain.wifishare.activity.HomeActivity;
 import com.trichain.wifishare.activity.SignalCheckActivity;
 import com.trichain.wifishare.activity.SpeedCheckActivity;
 import com.trichain.wifishare.model.WifiModel;
@@ -62,6 +63,15 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     private static final String WIFI_ROOT = "wifi_locations";
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(WIFI_REPORT_ROOT);
     DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference().child(WIFI_ROOT);
+    private WiFiSelectionListener wiFiSelectionListener;
+
+    public interface WiFiSelectionListener {
+        void onWiFiSelected(WifiModel wifiModel, int position);
+    }
+
+    public void setWiFiSelectionListener(WiFiSelectionListener wiFiSelectionListener) {
+        this.wiFiSelectionListener = wiFiSelectionListener;
+    }
 
     public WifiAdapter(List<WifiModel> wifiModels, Context c, int layout, BottomSheetBehavior mBehavior, BottomSheetDialog mBottomSheetDialog) {
         this.wifiModels = wifiModels;
@@ -69,6 +79,8 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
         this.layout = layout;
         this.mBehavior = mBehavior;
         this.mBottomSheetDialog = mBottomSheetDialog;
+        wiFiSelectionListener = (wifiModel, position) -> {
+        };
     }
 
     @NonNull
@@ -76,6 +88,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     public WifiAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new WifiAdapterViewHolder(LayoutInflater.from(c).inflate(layout, parent, false));
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull WifiAdapterViewHolder h, int position) {
@@ -118,6 +131,10 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
 
         h.btnItemMenu.setOnClickListener(v -> {
             showMenu(h, w);
+        });
+
+        h.itemView.setOnClickListener(v -> {
+            wiFiSelectionListener.onWiFiSelected(w, position);
         });
 
     }
@@ -397,6 +414,24 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
 
     private void shareInFireBase(WifiModel wifiModel) {
         showLoader(true);
+        HomeActivity activity = ((HomeActivity) c);
+        if (activity == null) {
+            Log.e(TAG, "getFreeHotspots: activity is null");
+            return;
+        }
+
+        activity.addWifiToFirebase(wifiModel.getSsid(), wifiModel.getPassword(), new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.e(TAG, "onComplete: " + task.toString());
+                showLoader(false);
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showLoader(false);
+            }
+        });
         String id = UUID.randomUUID().toString();
         ref2.child(id).setValue(wifiModel)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

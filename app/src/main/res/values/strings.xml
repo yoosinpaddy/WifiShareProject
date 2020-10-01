@@ -255,6 +255,7 @@
         <item>Zambia</item>
         <item>Zimbabwe</item>
     </string-array>
+    <string name="title_activity_maps">WiFi Near You</string>
 
 
 </resources>
