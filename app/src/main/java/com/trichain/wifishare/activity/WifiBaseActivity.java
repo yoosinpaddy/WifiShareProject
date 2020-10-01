@@ -12,7 +12,6 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,7 +55,7 @@ public class WifiBaseActivity extends AppCompatActivity {
         locationProviderClient = getFusedLocationProviderClient(this);
         requestLocationPermissions();
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifiManager=mWifiManager;
+        wifiManager = mWifiManager;
         ref = FirebaseDatabase.getInstance().getReference().child(WIFI_ROOT);
     }
 
@@ -78,8 +77,7 @@ public class WifiBaseActivity extends AppCompatActivity {
         savedResultsInterfaceListener.onSavedWifiResults(wifiConfigurations);
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         i.addAction(WifiManager.ACTION_PICK_WIFI_NETWORK);
-        registerReceiver(mWifiScanReceiver,
-                i);
+        registerReceiver(mWifiScanReceiver, i);
 
         mWifiManager.startScan();
 
@@ -208,5 +206,11 @@ public class WifiBaseActivity extends AppCompatActivity {
                     }
 
                 });
+    }
+
+    public void unregisterReceivers() {
+        if (mWifiScanReceiver != null) {
+            unregisterReceiver(mWifiScanReceiver);
+        }
     }
 }

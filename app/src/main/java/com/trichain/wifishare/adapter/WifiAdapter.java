@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,12 +36,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.activity.SignalCheckActivity;
 import com.trichain.wifishare.activity.SpeedCheckActivity;
 import com.trichain.wifishare.model.WifiModel;
+import com.trichain.wifishare.util.util;
 
 import java.security.Security;
 import java.util.List;
@@ -78,24 +79,53 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull WifiAdapterViewHolder h, int position) {
-        Log.e(TAG, "onBindViewHolder: " );
+        Log.e(TAG, "onBindViewHolder: ");
         WifiModel w = wifiModels.get(position);
         h.tvSSIDName.setText(w.getSsid());
         getWifiStrengthRealtime(h.imgWiFiItem);//update strength realtime
+        Log.e(TAG, "onBindViewHolder: isWifiConnected: " + w.isConnected());
         if (w.isConnected()) {
+            h.tvConnectionStatus.setText("Connected");
+            util.hideView(h.fabConnect, false);
+            util.showView(h.imgConnectionStatus, false);
         } else {
+            util.showView(h.fabConnect, false);
+            util.hideView(h.imgConnectionStatus, false);
             h.tvConnectionStatus.setText("");
+
+            h.fabConnect.setOnClickListener(v -> connect(w));
+
         }
         if (w.isSecured()) {
             h.tvSecurityStatus.setText("Secured");
         } else {
             h.tvSecurityStatus.setText("Not Secured");
         }
+
+        if (w.getLevel() != null) {
+            int signalStrength = 100 + w.getLevel();
+            Log.e(TAG, "onBindViewHolder: " + w.getSsid() + " level: " + w.getLevel());
+            if (isBetween(signalStrength, 0, 25)) {
+                h.imgWiFiItem.setImageResource(w.isSecured() ? R.drawable.ic_wifi_secure_empty : R.drawable.ic_wifi_empty);
+            } else if (isBetween(signalStrength, 26, 50)) {
+                h.imgWiFiItem.setImageResource(w.isSecured() ? R.drawable.ic_wifi_secure_signal_1 : R.drawable.ic_wifi_signal_1);
+            } else if (isBetween(signalStrength, 51, 75)) {
+                h.imgWiFiItem.setImageResource(w.isSecured() ? R.drawable.ic_wifi_secure_signal_2 : R.drawable.ic_wifi_signal_2);
+            } else if (isBetween(signalStrength, 76, 100)) {
+                h.imgWiFiItem.setImageResource(w.isSecured() ? R.drawable.ic_wifi_secure_signal_fill : R.drawable.ic_wifi_fill);
+            }
+        }
+
         h.btnItemMenu.setOnClickListener(v -> {
             showMenu(h, w);
         });
 
     }
+
+    public static boolean isBetween(int x, int lower, int upper) {
+        return lower <= x && x <= upper;
+    }
+
 
     private void showMenu(WifiAdapterViewHolder h, WifiModel w) {
         if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
@@ -248,8 +278,8 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     }
 
     private void showLoader(boolean b, String connecting) {
-        if (!b){
-            if (dialog!=null&&dialog.isShowing()){
+        if (!b) {
+            if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
             return;
@@ -335,8 +365,8 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     }
 
     private void showLoader(boolean b) {
-        if (!b){
-            if (dialog!=null&&dialog.isShowing()){
+        if (!b) {
+            if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
             return;
@@ -406,14 +436,17 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
 
     class WifiAdapterViewHolder extends RecyclerView.ViewHolder {
         TextView tvSSIDName, tvSecurityStatus, tvConnectionStatus;
-        ImageView imgWiFiItem, btnItemMenu;
+        ImageView imgWiFiItem, btnItemMenu, imgConnectionStatus;
         LinearLayout ll_security_connection;
+        ExtendedFloatingActionButton fabConnect;
 
         public WifiAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSSIDName = itemView.findViewById(R.id.tvSSIDName);
             ll_security_connection = itemView.findViewById(R.id.ll_security_connection);
             imgWiFiItem = itemView.findViewById(R.id.imgWiFiItem);
+            fabConnect = itemView.findViewById(R.id.fabConnectItem);
+            imgConnectionStatus = itemView.findViewById(R.id.imgConnectionStatus);
             tvSecurityStatus = itemView.findViewById(R.id.tvSecurityStatus);
             tvConnectionStatus = itemView.findViewById(R.id.tvConnectionStatus);
             btnItemMenu = itemView.findViewById(R.id.btnItemMenu);

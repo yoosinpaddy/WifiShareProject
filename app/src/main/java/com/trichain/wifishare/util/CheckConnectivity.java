@@ -8,6 +8,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import java.util.concurrent.Executor;
+
 public class CheckConnectivity {
 
     /*Activity context*/
@@ -53,6 +55,26 @@ public class CheckConnectivity {
     public static int getSingleWiFiSignalStrength(Context context) {
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int numberOfLevels = 5;
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        return WifiManager.calculateSignalLevel(wifiInfo.getRssi(), numberOfLevels);
+    }
+
+
+    public static int getAllWiFiSignalStrength(Context context) {
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        int numberOfLevels = 5;
+        wifiManager.startScan();
+       /* wifiManager.registerScanResultsCallback(new Executor() {
+            @Override
+            public void execute(Runnable runnable) {
+
+            }
+        }, new WifiManager.ScanResultsCallback() {
+            @Override
+            public void onScanResultsAvailable() {
+
+            }
+        });*/
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         return WifiManager.calculateSignalLevel(wifiInfo.getRssi(), numberOfLevels);
     }

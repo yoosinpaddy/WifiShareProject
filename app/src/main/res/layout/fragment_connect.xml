@@ -2,231 +2,256 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorGreyBG">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBar"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:gravity="center_vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:background="@color/colorGreyBG">
 
-            <TextView
-                android:id="@+id/tvConnectionMessage"
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:gravity="center"
-                android:text="@string/connected_to_wifi"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:textColor="@color/white" />
+                android:layout_height="160dp"
+                android:gravity="center_vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/tvInternetConnected"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:gravity="center"
-                android:text="Internet Connected"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@color/colorGrey" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnGetMoreWiFi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="8dp"
-                android:background="@drawable/btn_rounded_white_green"
-                android:drawableStart="@drawable/ic_search_grey"
-                android:drawablePadding="8dp"
-                android:onClick="popKeywordClick"
-                android:text="Get More WiFi"
-                android:textAllCaps="false"
-                android:textColor="@color/grey_60"
-                android:textSize="20dp" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appBar">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:id="@+id/llNetworks"
+                <TextView
+                    android:id="@+id/tvConnectionMessage"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="@string/connected_to_wifi"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:textColor="@color/white" />
 
-                    <androidx.cardview.widget.CardView
+                <TextView
+                    android:id="@+id/tvInternetConnected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="Internet Connected"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:textColor="@color/colorGrey" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnGetMoreWiFi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/btn_rounded_white_green"
+                    android:drawableStart="@drawable/ic_search_grey"
+                    android:drawablePadding="8dp"
+                    android:onClick="popKeywordClick"
+                    android:text="Get More WiFi"
+                    android:textAllCaps="false"
+                    android:textColor="@color/grey_60"
+                    android:textSize="20dp" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/appBar">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/llNetworks"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_medium"
-                        android:visibility="visible"
-                        app:cardCornerRadius="0dp"
-                        app:cardElevation="1dp">
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical">
 
-                        <LinearLayout
+                        <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/spacing_xsmall">
+                            android:layout_marginTop="@dimen/spacing_medium"
+                            android:visibility="visible"
+                            app:cardCornerRadius="0dp"
+                            app:cardElevation="1dp">
 
-                            <TextView
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                android:gravity="start"
-                                android:text="Free WiFi Hotspots"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/colorGrey" />
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:padding="@dimen/spacing_xsmall">
 
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/recycler_free_hotspots"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                tools:itemCount="1"
-                                tools:listitem="@layout/item_free_wifi" />
+                                <ProgressBar
+                                    android:id="@+id/pb_free_wifi"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="16dp"
+                                    android:indeterminate="true"
+                                    android:indeterminateDrawable="@drawable/progress_rotate"
+                                    android:indeterminateTint="@color/grey_700"
+                                    android:visibility="gone" />
 
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_medium"
-                        android:visibility="visible"
-                        app:cardCornerRadius="0dp"
-                        app:cardElevation="1dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/spacing_xsmall">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                android:gravity="start"
-                                android:text="Password Required"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/colorGrey" />
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/recycler_protected_hotspots"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-
-                            <com.balysv.materialripple.MaterialRippleLayout
-                                style="@style/RippleStyleDark"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/spacing_large"
-                                android:layout_marginBottom="@dimen/spacing_large"
-                                android:padding="@dimen/spacing_medium">
-
-                                <LinearLayout
+                                <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal">
+                                    android:layout_margin="8dp"
+                                    android:gravity="start"
+                                    android:text="Free WiFi Hotspots"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                    android:textColor="@color/colorGrey" />
 
-                                    <ImageView
-                                        android:layout_width="32dp"
-                                        android:layout_height="32dp"
-                                        android:src="@drawable/ic_location"
-                                        app:tint="@color/colorPrimary" />
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recycler_free_hotspots"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:itemCount="1"
+                                    tools:listitem="@layout/item_free_wifi" />
 
-                                    <TextView
-                                        android:layout_width="wrap_content"
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_medium"
+                            android:visibility="visible"
+                            app:cardCornerRadius="0dp"
+                            app:cardElevation="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:padding="@dimen/spacing_xsmall">
+
+                                <ProgressBar
+                                    android:id="@+id/pb_protected_wifi"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="16dp"
+                                    android:indeterminate="true"
+                                    android:indeterminateDrawable="@drawable/progress_rotate"
+                                    android:indeterminateTint="@color/grey_700"
+                                    android:visibility="gone" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="8dp"
+                                    android:gravity="start"
+                                    android:text="Password Required"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                    android:textColor="@color/colorGrey" />
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recycler_protected_hotspots"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:itemCount="2"
+                                    tools:listitem="@layout/item_wifi_password_required" />
+
+                                <com.balysv.materialripple.MaterialRippleLayout
+                                    style="@style/RippleStyleDark"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_large"
+                                    android:layout_marginBottom="@dimen/spacing_large"
+                                    android:padding="@dimen/spacing_medium">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:gravity="center"
-                                        android:text="View map to explore hotspots nearby"
-                                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle" />
+                                        android:gravity="center_vertical"
+                                        android:orientation="horizontal">
 
-                                    <ImageView
-                                        android:layout_width="32dp"
-                                        android:layout_height="32dp"
-                                        android:src="@drawable/ic_chevron_right"
-                                        app:tint="@color/colorPrimary" />
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:src="@drawable/ic_location"
+                                            app:tint="@color/colorPrimary" />
 
-                                </LinearLayout>
-                            </com.balysv.materialripple.MaterialRippleLayout>
-                        </LinearLayout>
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:gravity="center"
+                                            android:text="View map to explore hotspots nearby"
+                                            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle" />
 
-                    </androidx.cardview.widget.CardView>
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:src="@drawable/ic_chevron_right"
+                                            app:tint="@color/colorPrimary" />
 
-                </LinearLayout>
+                                    </LinearLayout>
+                                </com.balysv.materialripple.MaterialRippleLayout>
+                            </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/llNoGPS"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:layout_marginTop="28dp"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                        </androidx.cardview.widget.CardView>
 
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/ic_my_location"
-                        app:tint="@color/blue_A100" />
+                    </LinearLayout>
 
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/llNoGPS"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="@string/gps_warning"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="28dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                        android:id="@+id/fabGPSSettings"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Go To Settings" />
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_my_location"
+                            app:tint="@color/blue_A100" />
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp"
+                            android:text="@string/gps_warning"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
-            </RelativeLayout>
+                        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                            android:id="@+id/fabGPSSettings"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Go To Settings" />
 
-        </androidx.core.widget.NestedScrollView>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.core.widget.NestedScrollView>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--bottom sheet container-->
-    <FrameLayout
-        android:id="@+id/bottom_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/bottom_sheet_behavior"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--bottom sheet container-->
+        <FrameLayout
+            android:id="@+id/bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/bottom_sheet_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -7,6 +7,7 @@ public class WifiModel {
     String security;
     Double lat;
     Double longt;
+    Integer level;
     boolean isFree;
     boolean isSecured;
     boolean isConnected;
@@ -47,6 +48,14 @@ public class WifiModel {
         this.isSecured = isSecured;
     }
 
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
 
     public String getSsid() {
         return ssid;

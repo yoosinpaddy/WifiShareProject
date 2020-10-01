@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/imgWiFiItem"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_centerVertical="true"
         android:layout_margin="4dp"
         android:src="@drawable/ic_wifi"
@@ -18,7 +18,7 @@
 
     <View
         android:id="@+id/spacer1"
-        android:layout_width="@dimen/spacing_large"
+        android:layout_width="@dimen/spacing_small"
         android:layout_height="0dp"
         android:layout_toEndOf="@id/imgWiFiItem" />
 
@@ -37,6 +37,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="SSID Name"
+            android:textSize="14sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
         <View
@@ -54,10 +55,11 @@
                 android:id="@+id/tvSecurityStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_security"
+                android:drawableStart="@drawable/ic_security_mini"
                 android:drawablePadding="4dp"
                 android:drawableTint="@color/green_500"
                 android:gravity="center_vertical"
+                android:textSize="12sp"
                 android:text="Secure"
                 android:textColor="@color/green_500" />
 
@@ -69,6 +71,7 @@
                 android:id="@+id/tvConnectionStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="12sp"
                 android:gravity="center_vertical"
                 android:text="Connected"
                 android:textColor="@color/green_500" />
@@ -100,6 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:textSize="12sp"
             android:text="Connect" />
 
     </RelativeLayout>
