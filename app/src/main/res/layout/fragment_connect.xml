@@ -3,22 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srlMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorGreyBG"
+        android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorGreyBG">
+            android:orientation="vertical">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appBar"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:gravity="center_vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:id="@+id/tvConnectionMessage"
@@ -50,18 +51,17 @@
                     android:drawableStart="@drawable/ic_search_grey"
                     android:drawablePadding="8dp"
                     android:onClick="popKeywordClick"
-                    android:text="Get More WiFi"
+                    android:text="Get More FREE WiFi"
                     android:textAllCaps="false"
                     android:textColor="@color/grey_60"
                     android:textSize="20dp" />
 
             </com.google.android.material.appbar.AppBarLayout>
 
-
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nestedScrollView"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/appBar">
@@ -165,7 +165,7 @@
                                     tools:listitem="@layout/item_wifi_password_required" />
 
                                 <com.balysv.materialripple.MaterialRippleLayout
-                                   android:id="@+id/mapRipple"
+                                    android:id="@+id/mapRipple"
                                     style="@style/RippleStyleDark"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -242,17 +242,12 @@
                 </RelativeLayout>
 
             </androidx.core.widget.NestedScrollView>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <!--bottom sheet container-->
-        <FrameLayout
-            android:id="@+id/bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/bottom_sheet_behavior"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <!--bottom sheet container-->
+            <FrameLayout
+                android:id="@+id/bottom_sheet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/bottom_sheet_behavior" />
+        </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

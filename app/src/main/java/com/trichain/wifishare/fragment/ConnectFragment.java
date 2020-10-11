@@ -19,10 +19,10 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.trichain.wifishare.R;
@@ -68,6 +68,14 @@ public class ConnectFragment extends Fragment {
 
         b.btnGetMoreWiFi.setOnClickListener(v -> startRunnables());
 
+
+        b.srlMain.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                startRunnables();
+            }
+        });
+
         c = getActivity();
         checkGPSEnabled();
         initRecycler();
@@ -85,7 +93,7 @@ public class ConnectFragment extends Fragment {
     }
 
     private void setUpMapListener() {
-        b.mapRipple.setOnClickListener(v->{
+        b.mapRipple.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), MapsActivity.class));
         });
     }

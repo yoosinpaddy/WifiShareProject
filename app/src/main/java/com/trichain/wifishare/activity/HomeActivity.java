@@ -11,8 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
@@ -43,6 +41,7 @@ public class HomeActivity extends WifiBaseActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
     }
 
     @Override
@@ -50,16 +49,16 @@ public class HomeActivity extends WifiBaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_connect, menu);
 
-        SwitchCompat s= (SwitchCompat) menu.findItem(R.id.action_main_switch).getActionView().findViewById(R.id.switchForActionBar);
+        SwitchCompat s = (SwitchCompat) menu.findItem(R.id.action_main_switch).getActionView().findViewById(R.id.switchForActionBar);
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
-                    if (!isWifiOn()){
+                if (b) {
+                    if (!isWifiOn()) {
                         turnOnWIFI();
                     }
-                }else {
-                    if (isWifiOn()){
+                } else {
+                    if (isWifiOn()) {
                         turnOffWIFI();
                     }
                 }
@@ -70,35 +69,35 @@ public class HomeActivity extends WifiBaseActivity {
     }
 
     private void keepUpdatingWifi(SwitchCompat s) {
-        if (s!=null){
+        if (s != null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (isWifiOn()){
-                        if (s!=null){
+                    if (isWifiOn()) {
+                        if (s != null) {
                             s.setChecked(true);
                         }
-                    }else {
-                        if (s!=null){
+                    } else {
+                        if (s != null) {
                             s.setChecked(false);
                         }
 
                     }
-                    new Handler().postDelayed(this,1000);
+                    new Handler().postDelayed(this, 1000);
                 }
-            },1000);
-        }else {
-            Log.e(TAG, "keepUpdatingWifi: switch is null" );
+            }, 1000);
+        } else {
+            Log.e(TAG, "keepUpdatingWifi: switch is null");
         }
     }
 
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId()==R.id.action_main_switch){
+        if (item.getItemId() == R.id.action_main_switch) {
 
         }
-        if (item.getItemId()==R.id.action_map){
+        if (item.getItemId() == R.id.action_map) {
             startActivity(new Intent(this, MapsActivity.class));
         }
         return super.onOptionsItemSelected(item);
