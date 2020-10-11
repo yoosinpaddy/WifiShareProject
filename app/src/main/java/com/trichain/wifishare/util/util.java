@@ -132,28 +132,6 @@ public class util {
 
     private static void showDialog(Activity activity, String message, String body, String btnPostiveText,
                                    String btnNegativeText, View.OnClickListener onClickListener) {
-        final Dialog dialog = new Dialog(activity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-        dialog.setContentView(R.layout.dialog_information);
-        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setCancelable(true);
-
-        ((Button) dialog.findViewById(R.id.bt_join)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(activity.getApplicationContext(), "Button Join Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        ((Button) dialog.findViewById(R.id.bt_decline)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(activity.getApplicationContext(), "Button Decline Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        dialog.show();
     }
 
 }

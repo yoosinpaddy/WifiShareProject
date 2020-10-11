@@ -233,6 +233,12 @@
         <item name="windowActionBar">false</item>
     </style>
 
+    <style name="Theme.CustomDialog" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:background">#00000000</item>
+    </style>
 
     <declare-styleable name="ProgressView">
         <attr name="ring_color" format="color" />
