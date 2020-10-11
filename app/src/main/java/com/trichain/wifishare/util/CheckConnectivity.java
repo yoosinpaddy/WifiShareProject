@@ -8,7 +8,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import java.util.concurrent.Executor;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class CheckConnectivity {
 
@@ -51,6 +52,20 @@ public class CheckConnectivity {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
+    public boolean isActuallyConnectedToTheInternet(Context context) {
+        if (isOnline(context)) {
+            try {
+                URLConnection google = new URL("https://www.google.com").openConnection();
+                google.setRequestProperty("User-Agent", "ConnectionTest");
+                google.setRequestProperty("Connection", "close");
+                google.setConnectTimeout(1000); // configurable
+                google.connect();
+            } catch (Exception e) {
+
+            }
+        }
+        return false;//TODO;;;;;;
+    }
 
     public static int getSingleWiFiSignalStrength(Context context) {
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);

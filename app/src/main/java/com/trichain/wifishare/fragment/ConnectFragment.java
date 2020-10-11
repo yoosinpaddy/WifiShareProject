@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +19,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -27,10 +29,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.activity.HomeActivity;
 import com.trichain.wifishare.activity.MapsActivity;
+import com.trichain.wifishare.activity.WifiBaseActivity;
 import com.trichain.wifishare.adapter.WifiAdapter;
 import com.trichain.wifishare.databinding.FragmentConnectBinding;
 import com.trichain.wifishare.listeners.ScanResultsInterface;
@@ -44,7 +49,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class ConnectFragment extends Fragment {
+public class ConnectFragment extends Fragment implements WifiBaseActivity.WiFiConnectionListener {
 
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 332;
     private static final String TAG = "ConnectFragment";
@@ -55,6 +60,8 @@ public class ConnectFragment extends Fragment {
     List<WifiModel> wifiModels = new ArrayList<>();
     List<WifiModel> protectedWifiModels = new ArrayList<>();
     private Timer timerFree, timerSecure;
+    private Snackbar sbInfo;
+    Dialog dialog;
 
     Context c;
 
@@ -62,15 +69,16 @@ public class ConnectFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         b = DataBindingUtil.inflate(inflater, R.layout.fragment_connect, container, false);
-        if (!CheckConnectivity.getWiFiName(getActivity()).contains("<unknown ssid>")) {
-            b.tvConnectionMessage.setText(getActivity().getString(R.string.connected_to_wifi, CheckConnectivity.getWiFiName(getActivity()).replace("\"", "")));
-        } else {
-            b.tvConnectionMessage.setText("No wifi connected");
-        }
+
+        updateWiFiConnectedLabel();
+
         b.tvInternetConnected.setText(CheckConnectivity.isOnline(getContext()) ? "Internet connected" : "No internet connection");
 
         b.btnGetMoreWiFi.setOnClickListener(v -> startRunnables());
 
+
+        HomeActivity activity = ((HomeActivity) getActivity());
+        activity.setWiFiConnectionListener(this);
 
         b.srlMain.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -95,6 +103,19 @@ public class ConnectFragment extends Fragment {
         return b.getRoot();
     }
 
+    private void updateWiFiConnectedLabel() {
+        if (!CheckConnectivity.getWiFiName(getActivity()).contains("<unknown ssid>")) {
+            b.tvConnectionMessage.setText(getActivity().getString(R.string.connected_to_wifi, CheckConnectivity.getWiFiName(getActivity()).replace("\"", "")));
+            if (!CheckConnectivity.isOnline(getActivity())) {
+                b.tvInternetConnected.setText("WiFi has no internet connection!");
+            } else {
+                b.tvInternetConnected.setText("Internet connected");
+            }
+        } else {
+            b.tvConnectionMessage.setText("No wifi connected");
+        }
+    }
+
     private void setUpMapListener() {
         b.mapRipple.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), MapsActivity.class));
@@ -111,7 +132,6 @@ public class ConnectFragment extends Fragment {
             @Override
             public void onScanResultsAvailable(List<ScanResult> scanResultInterfaces) {
                 Log.e(TAG, "getFreeHotSpots onScanResultsAvailable: " + scanResultInterfaces.size());
-
             }
 
             @Override
@@ -145,6 +165,7 @@ public class ConnectFragment extends Fragment {
         activity.getWifiListOffline(new ScanResultsInterface() {
             @Override
             public void onScanResultsAvailable(List<ScanResult> scanResultInterfaces) {
+                b.srlMain.setRefreshing(false);
                 getActivity().runOnUiThread(() -> {
                     util.hideView(b.pbProtectedWifi, true);
                 });
@@ -199,9 +220,9 @@ public class ConnectFragment extends Fragment {
                 Log.e(TAG, "protectedWifiModels: " + protectedWifiModels.size());
                 getActivity().runOnUiThread(() -> {
                     util.hideView(b.pbFreeWifi, true);
+                    nonFreeAdapter.notifyDataSetChanged();
+                    freeAdapter.notifyDataSetChanged();
                 });
-                nonFreeAdapter.notifyDataSetChanged();
-                freeAdapter.notifyDataSetChanged();
                 //setUpAgain(wifiModels2);
 //                setUpAgain(protectedWifiModels);
 //                Log.e(TAG, "onScanResultsAvailable: protectedWifiModels:" + protectedWifiModels.size());
@@ -259,15 +280,15 @@ public class ConnectFragment extends Fragment {
         freeAdapter.setWiFiSelectionListener(new WifiAdapter.WiFiSelectionListener() {
             @Override
             public void onWiFiSelected(WifiModel wifiModel, int position) {
-                if (!wifiModel.isConnected()) showRealConnectDialog(wifiModel, position);
-                else showConnectDialog(wifiModel, position);
+                if (!wifiModel.isConnected()) showRealConnectDialog(wifiModel, position, 1200);
+                else showConnectDialog(wifiModel, position, false);
             }
         });
 
         nonFreeAdapter.setWiFiSelectionListener(new WifiAdapter.WiFiSelectionListener() {
             @Override
             public void onWiFiSelected(WifiModel wifiModel, int position) {
-                showConnectDialog(wifiModel, position);
+                showConnectDialog(wifiModel, position, false);
             }
         });
 
@@ -282,9 +303,9 @@ public class ConnectFragment extends Fragment {
     int curr = -1;
     int viewcount = 0;
 
-    private void showRealConnectDialog(WifiModel wifiModel, int position) {
+    private void showRealConnectDialog(WifiModel wifiModel, int position, long length) {
         View root = LayoutInflater.from(c).inflate(R.layout.dialog_information, null);
-        Dialog dialog = new Dialog(c, R.style.Theme_CustomDialog);
+        dialog = new Dialog(c, R.style.Theme_CustomDialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialog.setContentView(root);
         dialog.setCancelable(true);
@@ -325,11 +346,11 @@ public class ConnectFragment extends Fragment {
                     });
                 }
             }
-        }, 1000, 1200);
+        }, 1000, length);
     }
 
 
-    private void showConnectDialog(WifiModel wifiModel, int position) {
+    private void showConnectDialog(WifiModel wifiModel, int position, boolean isWrongPass) {
         AlertDialog.Builder b = new AlertDialog.Builder(getContext());
         View root = LayoutInflater.from(getContext()).inflate(R.layout.dialog_connect_to_wifi, null);
         TextInputEditText edtPassword = root.findViewById(R.id.edtConnectPassword);
@@ -337,12 +358,43 @@ public class ConnectFragment extends Fragment {
         TextView tvWifiNameConnectDialog = root.findViewById(R.id.tvWifiNameConnectDialog);
 
         tvWifiNameConnectDialog.setText(wifiModel.getSsid());
+        if (isWrongPass) {
+            edtPassword.setError("Incorrect password!");
+        }
 
         b.setPositiveButton("Connect", (dialogInterface, i) -> {
             String password = edtPassword.getText().toString().trim();
             if (!TextUtils.isEmpty(password)) {
                 wifiModel.setPassword(password);
                 connectToWiFi(checkBox, wifiModel);
+                showRealConnectDialog(wifiModel, 0, 15000);
+                final boolean[] hasConnected = {false};
+                final int[] a = {0};
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        a[0]++;
+                        WifiManager wifiManager = (WifiManager) c.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                        WifiInfo info = wifiManager.getConnectionInfo();
+                        String ssid = info.getSSID();
+                        Log.e(TAG, "run: has connected:" + ssid);
+                        if (ssid.contentEquals(wifiModel.getSsid())) {
+                            hasConnected[0] = true;
+//                            showLoader(false);
+                        } else {
+                            hasConnected[0] = false;
+                            if (a[0] >= 15) {
+                                if (dialog != null && dialog.isShowing()) {
+                                    dialog.dismiss();
+                                }
+                                showConnectDialog(wifiModel, 0, true);
+                            } else {
+                                new Handler().postDelayed(this, 1000);
+
+                            }
+                        }
+                    }
+                }, 1000);
             } else {
                 edtPassword.setError("Password is required");
                 edtPassword.requestFocus();
@@ -374,6 +426,10 @@ public class ConnectFragment extends Fragment {
 
     private void startRunnables() {
         stopRunnables();
+        if (!checkGPSEnabled()) {
+            b.srlMain.setRefreshing(false);
+            return;
+        }
         //Toast.makeText(c, "Searching for WiFi", Toast.LENGTH_SHORT).show();
         timerFree = new Timer();
         timerFree.scheduleAtFixedRate(new TimerTask() {
@@ -381,7 +437,7 @@ public class ConnectFragment extends Fragment {
             public void run() {
                 getFreeHotSpots();
             }
-        }, 600, 5000);
+        }, 600, 7000);
 
         timerSecure = new Timer();
         timerSecure.scheduleAtFixedRate(new TimerTask() {
@@ -389,7 +445,7 @@ public class ConnectFragment extends Fragment {
             public void run() {
 //                getNonFreeHotSpots();
             }
-        }, 1600, 5000);
+        }, 1600, 7000);
     }
 
     @Override
@@ -422,15 +478,15 @@ public class ConnectFragment extends Fragment {
 
     }
 
-    public void checkGPSEnabled() {
+    public boolean checkGPSEnabled() {
         final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        assert manager != null;
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        boolean isGPSEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (!isGPSEnabled) {
             toggleVisibility(0);
         } else {
             toggleVisibility(1);
         }
+        return isGPSEnabled;
     }
 
     private void startGPSIntent() {
@@ -455,4 +511,24 @@ public class ConnectFragment extends Fragment {
     }
 
 
+    @Override
+    public void onWiFiStatusChanged(Boolean isWiFiOn) {
+        updateWiFiConnectedLabel();
+        sbInfo = Snackbar.make(b.appBar, "WiFi NOT connected", BaseTransientBottomBar.LENGTH_INDEFINITE);
+        if (!isWiFiOn) {
+            sbInfo.setAction("Connect", v -> {
+                Log.e(TAG, "onWiFiStatusChanged: Attempting to switch on wifi");
+                HomeActivity activity = ((HomeActivity) getActivity());
+                if (activity == null) {
+                    Log.e(TAG, "onWiFiStatusChanged: activity is null");
+                    return;
+                }
+                activity.turnOnWIFI();
+            });
+            sbInfo.show();
+        } else {
+            sbInfo.dismiss();
+        }
+
+    }
 }

@@ -143,7 +143,8 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
         });
 
         h.itemView.setOnClickListener(v -> {
-            wiFiSelectionListener.onWiFiSelected(w, position);
+            connect(w);
+            //wiFiSelectionListener.onWiFiSelected(w, position);
         });
 
     }
@@ -292,29 +293,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
                 Log.e(TAG, "connectToWifi: non Target: " + ssid);
             }
         }
-        final int[] a = {0};
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                a[0]++;
-                WifiManager wifiManager = (WifiManager) c.getSystemService(Context.WIFI_SERVICE);
-                WifiInfo info = wifiManager.getConnectionInfo();
-                String ssid = info.getSSID();
-                Log.e(TAG, "run: has connected:" + ssid);
-                if (ssid.contentEquals(w.getSsid())) {
-                    hasConnected[0] = true;
-                    showLoader(false);
-                } else {
-                    hasConnected[0] = false;
-                    if (a[0] == 5) {
-                        //Toast.makeText(c, "Cant connect to the network", Toast.LENGTH_SHORT).show();
-                    } else {
-                        new Handler().postDelayed(this, 5000);
 
-                    }
-                }
-            }
-        }, 5000);
     }
 
     private void showLoader(boolean b, String message) {
