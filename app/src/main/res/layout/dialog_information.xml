@@ -8,69 +8,128 @@
     app:cardElevation="3dp"
     app:cardUseCompatPadding="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/imgTop"
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:scaleType="centerCrop"
             android:src="@drawable/material_bg_1" />
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/lltop"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp">
+
+            <ProgressBar
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_centerInParent="true"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/progress_rotate"
+                android:indeterminateTint="@color/white" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_vpn_key" />
+        </RelativeLayout>
+
+
         <LinearLayout
+            android:id="@+id/lltop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imgTop"
+            android:layout_marginBottom="4dp"
             android:orientation="vertical"
             android:padding="@dimen/spacing_large">
 
             <TextView
+                android:id="@+id/networkName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="Dialog Title"
+                android:gravity="center"
+                android:text="Network Name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:textColor="@color/grey_90" />
+                android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/tvstatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:fontFamily="sans-serif-light"
-                android:text="Body content"
+                android:gravity="center"
+                android:text="Network Status"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                android:textColor="@color/grey_60" />
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_medium"
-            android:gravity="end"
-            android:orientation="horizontal">
+            android:layout_below="@id/imgTop"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_large">
 
-            <Button
-                android:id="@+id/bt_decline"
-                style="@style/Button.Primary.Borderless"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tvTesting1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="DECILNE"
-                android:textColor="@color/colorAccent" />
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:drawableStart="@drawable/ic_check_circle"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/green_400"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:text="Testing the network environment"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                android:textColor="@color/grey_90"
+                android:visibility="invisible" />
 
-            <Button
-                android:id="@+id/bt_join"
-                style="@style/Button.Primary.Borderless"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tvTesting2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="JOIN"
-                android:textColor="@color/colorPrimary" />
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:drawableStart="@drawable/ic_check_circle"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/green_400"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:text="Verifying hotspot..."
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                android:textColor="@color/grey_90"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/tvTesting3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:drawableStart="@drawable/ic_check_circle"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/green_400"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:text="Connecting, please wait"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                android:textColor="@color/grey_90"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

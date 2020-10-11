@@ -80,7 +80,7 @@ public class SecurityCheckActivity extends AppCompatActivity {
     }
 
 
-    int currentView = 0; // To show results systematically
+    int currentView = -1; // To show results systematically
 
     private void displayResults() {
         toggleLayoutVisibility(1);

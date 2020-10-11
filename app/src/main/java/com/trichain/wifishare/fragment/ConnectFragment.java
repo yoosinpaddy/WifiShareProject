@@ -1,6 +1,7 @@
 package com.trichain.wifishare.fragment;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,7 +88,7 @@ public class ConnectFragment extends Fragment {
     }
 
     private void setUpMapListener() {
-        b.mapRipple.setOnClickListener(v->{
+        b.mapRipple.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), MapsActivity.class));
         });
     }
@@ -248,7 +251,8 @@ public class ConnectFragment extends Fragment {
         freeAdapter.setWiFiSelectionListener(new WifiAdapter.WiFiSelectionListener() {
             @Override
             public void onWiFiSelected(WifiModel wifiModel, int position) {
-                if (!wifiModel.isConnected()) showConnectDialog(wifiModel, position);
+                if (!wifiModel.isConnected()) showRealConnectDialog(wifiModel, position);
+                else showConnectDialog(wifiModel, position);
             }
         });
 
@@ -265,6 +269,57 @@ public class ConnectFragment extends Fragment {
         startRunnables();
 
     }
+
+
+    int curr = -1;
+    int viewcount = 0;
+
+    private void showRealConnectDialog(WifiModel wifiModel, int position) {
+        View root = LayoutInflater.from(c).inflate(R.layout.dialog_information, null);
+        Dialog dialog = new Dialog(c, R.style.Theme_CustomDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(root);
+        dialog.setCancelable(true);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        TextView networkName = root.findViewById(R.id.networkName);
+        TextView tvstatus = root.findViewById(R.id.tvstatus);
+        TextView tvTesting1 = root.findViewById(R.id.tvTesting1);
+        TextView tvTesting2 = root.findViewById(R.id.tvTesting2);
+        TextView tvTesting3 = root.findViewById(R.id.tvTesting3);
+
+        networkName.setText(wifiModel.getSsid());
+        tvstatus.setText("securely connecting...");
+
+        dialog.show();
+
+        View[] items = new View[]{tvTesting1, tvTesting2, tvTesting3};
+        viewcount = items.length - 1;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (curr < viewcount) {
+                    getActivity().runOnUiThread(() -> {
+                        util.showView(items[curr], true);
+                    });
+                    curr++;
+                } else {
+                    curr = -1;
+                    getActivity().runOnUiThread(() -> {
+                        dialog.dismiss();
+                        startRunnables();
+                        timer.cancel();
+                    });
+                }
+            }
+        }, 1000, 1200);
+    }
+
 
     private void showConnectDialog(WifiModel wifiModel, int position) {
         AlertDialog.Builder b = new AlertDialog.Builder(getContext());
@@ -311,7 +366,7 @@ public class ConnectFragment extends Fragment {
 
     private void startRunnables() {
         stopRunnables();
-        Toast.makeText(c, "Searching for WiFi", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(c, "Searching for WiFi", Toast.LENGTH_SHORT).show();
         timerFree = new Timer();
         timerFree.scheduleAtFixedRate(new TimerTask() {
             @Override

@@ -2,6 +2,7 @@ package com.trichain.wifishare.adapter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,12 +10,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +40,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.trichain.wifishare.R;
@@ -48,6 +54,9 @@ import com.trichain.wifishare.util.util;
 
 import java.security.Security;
 import java.util.List;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterViewHolder> {
@@ -209,6 +218,18 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
             @Override
             public void onClick(View v) {
                 forget(w);
+                AlertDialog.Builder b= new AlertDialog.Builder(c);
+                b.setTitle("Failed to forget network");
+                b.setMessage("Due to system restriction, failed to forget network in the app. Please proceed to phone settings->Wi-Fi (WLAN)");
+                b.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        c.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+                    }
+                }).setNegativeButton("Cancel", (dialog1, which) -> {
+                    dialog1.dismiss();
+                });
+                b.show();
             }
         });
         (view.findViewById(R.id.disconnect)).setOnClickListener(new View.OnClickListener() {
@@ -246,7 +267,9 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
 
     private void connect(WifiModel w) {
         final boolean[] hasConnected = {false};
-        showLoader(true, "Connecting");
+        //showLoader(true, "Connecting");
+        //showRealConnectDialog(w, 0);
+        wiFiSelectionListener.onWiFiSelected(w, 0);
         String ssid = w.getSsid();
         String key = w.getPassword();
         WifiManager wifiManager = (WifiManager) c.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -284,7 +307,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
                 } else {
                     hasConnected[0] = false;
                     if (a[0] == 5) {
-                        Toast.makeText(c, "Cant connect to the network", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(c, "Cant connect to the network", Toast.LENGTH_SHORT).show();
                     } else {
                         new Handler().postDelayed(this, 5000);
 
@@ -294,34 +317,27 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
         }, 5000);
     }
 
-    private void showLoader(boolean b, String connecting) {
+    private void showLoader(boolean b, String message) {
         if (!b) {
             if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
             return;
         }
-        final Dialog dialog = new Dialog(c);
+        dialog = new Dialog(c, R.style.Theme_CustomDialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialog.setContentView(R.layout.dialog_loading);
         dialog.setCancelable(true);
 
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-
-        ((TextView) dialog.findViewById(R.id.text_status)).setText(connecting);
+        ((TextView) dialog.findViewById(R.id.text_status)).setText(message);
         ((AppCompatButton) dialog.findViewById(R.id.btnDeclineLeadership)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(c.getApplicationContext(), "Declined", Toast.LENGTH_SHORT).show();
+                Toast.makeText(c.getApplicationContext(), "Canceled", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
         dialog.show();
-        dialog.getWindow().setAttributes(lp);
     }
 
     private void disConnect(WifiModel w) {
@@ -382,6 +398,11 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     }
 
     private void showLoader(boolean b) {
+        if(mBehavior!=null){
+            if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        }
         if (!b) {
             if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
@@ -413,7 +434,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
     }
 
     private void shareInFireBase(WifiModel wifiModel) {
-        showLoader(true);
+        showLoader(true, "Sharing...");
         HomeActivity activity = ((HomeActivity) c);
         if (activity == null) {
             Log.e(TAG, "getFreeHotspots: activity is null");
@@ -438,6 +459,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.e(TAG, "onComplete: " + task.toString());
+                        Toast.makeText(activity, "WiFi shared successfully", Toast.LENGTH_SHORT).show();
                         showLoader(false);
                     }
                 }).addOnFailureListener(new OnFailureListener() {

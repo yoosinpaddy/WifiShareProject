@@ -9,17 +9,29 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,6 +43,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,8 +52,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.model.WifiModel;
+import com.trichain.wifishare.util.util;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -99,7 +116,128 @@ public class MapsActivity extends WifiBaseActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         getLastKnownLocation();
+
+        mMap.setOnMarkerClickListener(marker -> {
+            WifiModel m = (WifiModel) marker.getTag();
+            Log.e(TAG, "onMapReady: clicked " + m.getSsid());
+
+            new AlertDialog.Builder(MapsActivity.this)
+                    .setTitle("Connect to " + m.getSsid())
+                    .setPositiveButton("Connect", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            connect(m);
+                        }
+                    })
+                    .setMessage("You are about to connect to WiFi: " + m.getSsid())
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+            return true;
+        });
     }
+
+    private void connect(WifiModel w) {
+        final boolean[] hasConnected = {false};
+        showRealConnectDialog(w, 0);
+        String ssid = w.getSsid();
+        String key = w.getPassword();
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            return;
+        }
+        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+        for (WifiConfiguration i : list) {
+            if (i.SSID != null && i.SSID.equals("\"" + ssid + "\"")) {
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(i.networkId, true);
+                wifiManager.reconnect();
+                Log.e(TAG, "connectToWifi: " + ssid);
+
+                break;
+            } else {
+                Log.e(TAG, "connectToWifi: non Target: " + ssid);
+            }
+        }
+        final int[] a = {0};
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                a[0]++;
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                WifiInfo info = wifiManager.getConnectionInfo();
+                String ssid = info.getSSID();
+                Log.e(TAG, "run: has connected:" + ssid);
+                if (ssid.contentEquals(w.getSsid())) {
+                    hasConnected[0] = true;
+                } else {
+                    hasConnected[0] = false;
+                    if (a[0] == 5) {
+                        //Toast.makeText(c, "Cant connect to the network", Toast.LENGTH_SHORT).show();
+                    } else {
+                        new Handler().postDelayed(this, 5000);
+
+                    }
+                }
+            }
+        }, 5000);
+    }
+
+    int curr = -1;
+    int viewcount = 0;
+
+    private void showRealConnectDialog(WifiModel wifiModel, int position) {
+        View root = LayoutInflater.from(MapsActivity.this).inflate(R.layout.dialog_information, null);
+        Dialog dialog = new Dialog(MapsActivity.this, R.style.Theme_CustomDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(root);
+        dialog.setCancelable(true);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        TextView networkName = root.findViewById(R.id.networkName);
+        TextView tvstatus = root.findViewById(R.id.tvstatus);
+        TextView tvTesting1 = root.findViewById(R.id.tvTesting1);
+        TextView tvTesting2 = root.findViewById(R.id.tvTesting2);
+        TextView tvTesting3 = root.findViewById(R.id.tvTesting3);
+
+        networkName.setText(wifiModel.getSsid());
+        tvstatus.setText("securely connecting...");
+
+        dialog.show();
+
+        View[] items = new View[]{tvTesting1, tvTesting2, tvTesting3};
+        viewcount = items.length - 1;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (curr < viewcount) {
+                    runOnUiThread(() -> {
+                        util.showView(items[curr], true);
+                    });
+                    curr++;
+                } else {
+                    curr = -1;
+                    runOnUiThread(() -> {
+                        dialog.dismiss();
+                        timer.cancel();
+                    });
+                }
+            }
+        }, 1000, 1200);
+    }
+
 
     ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
@@ -111,7 +249,11 @@ public class MapsActivity extends WifiBaseActivity implements OnMapReadyCallback
                     if (wifiModel.getLat() != 0) {
                         Log.e(TAG, "onDataChange: has location:" + wifiModel.getSsid());
                         LatLng sydney = new LatLng(wifiModel.getLat(), wifiModel.getLongt());
-                        mMap.addMarker(new MarkerOptions().position(sydney).title(wifiModel.getSsid()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_signal_map)));
+                        Marker marker = mMap.addMarker(new MarkerOptions().position(sydney)
+                                .title(wifiModel.getSsid())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_signal_map)));
+                        marker.setTag(wifiModel);
+
                         //mMap.animateCamera(CameraUpdateFactory.newLatLng(sydney));
                     } else {
                         Log.e(TAG, "onDataChange: no location");

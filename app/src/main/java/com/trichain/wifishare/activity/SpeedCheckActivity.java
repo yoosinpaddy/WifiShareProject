@@ -41,7 +41,7 @@ public class SpeedCheckActivity extends AppCompatActivity {
 
         speedTestSocket = new SpeedTestSocket();
 
-        b.tvWiFiNameSpeed.setText(CheckConnectivity.getWiFiName(this));
+        b.tvWiFiNameSpeed.setText(CheckConnectivity.getWiFiName(this).replace("\"",""));
         b.tvDownloadSpeed.setText(getString(R.string.string_string, "Download: ", "0Kbps"));
         b.tvUpSpeed.setText(getString(R.string.string_string, "Upload:   ", "0Kbps"));
 
@@ -105,7 +105,7 @@ public class SpeedCheckActivity extends AppCompatActivity {
     private void testDownloadSpeed() {
         Log.e(TAG, "testDownloadSpeed: Attempting to start download ");
         appExecutors.networkIO().execute(() -> {
-            speedTestSocket.startDownload("https://scaleway.testdebit.info/5M/5M.zip",10000);
+            speedTestSocket.startDownload("https://scaleway.testdebit.info/5M/5M.zip");
         });
     }
 
