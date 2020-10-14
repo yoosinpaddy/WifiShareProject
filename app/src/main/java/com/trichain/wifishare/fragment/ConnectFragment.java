@@ -11,7 +11,9 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -356,7 +358,22 @@ public class ConnectFragment extends Fragment implements WifiBaseActivity.WiFiCo
         TextInputEditText edtPassword = root.findViewById(R.id.edtConnectPassword);
         MaterialCheckBox checkBox = root.findViewById(R.id.cbxShareConnect);
         TextView tvWifiNameConnectDialog = root.findViewById(R.id.tvWifiNameConnectDialog);
+        edtPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         tvWifiNameConnectDialog.setText(wifiModel.getSsid());
         if (isWrongPass) {
             edtPassword.setError("Incorrect password!");
@@ -405,7 +422,42 @@ public class ConnectFragment extends Fragment implements WifiBaseActivity.WiFiCo
         });
 
         b.setView(root);
-        b.show();
+        AlertDialog c=b.create();
+        c.show();
+
+        // Initially disable the button
+        ((AlertDialog) c).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        // OR you can use here setOnShowListener to disable button at first time.
+
+        // Now set the textchange listener for edittext
+        edtPassword.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                // Check if edittext is empty
+                if (s.toString().length()<8) {
+                    // Disable ok button
+                    ((AlertDialog) c).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+                } else {
+                    // Something into edit text. Enable the button.
+                    ((AlertDialog) c).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+
+            }
+        });
 
     }
 

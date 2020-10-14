@@ -55,7 +55,7 @@ public class SpeedCheckActivity extends AppCompatActivity {
                 System.out.println("[COMPLETED] rate in octet/s : " + report.getTransferRateOctet());
                 System.out.println("[COMPLETED] rate in bit/s   : " + report.getTransferRateBit());
                 appExecutors.mainThread().execute(() -> {
-                    b.speedView.speedTo(0, 100);
+                    b.speedView.speedTo(0, 1500);
 
                     if (isDownloadTest) {
                         b.tvDownloadSpeed.setText(getString(R.string.string_string, "Download: ", Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000 + "Kbps"));
@@ -75,7 +75,7 @@ public class SpeedCheckActivity extends AppCompatActivity {
                 Log.e(TAG, "onError: Network Error occurred -> " + errorMessage);
 
                 appExecutors.mainThread().execute(() -> {
-                    b.speedView.speedTo(0, 100);
+                    b.speedView.speedTo(0, 1500);
                 });
             }
 
@@ -85,10 +85,12 @@ public class SpeedCheckActivity extends AppCompatActivity {
                 // called to notify download/upload progress
                 System.out.println("[PROGRESS] progress : " + percent + "%");
                 appExecutors.mainThread().execute(() -> {
-                    b.speedView.speedTo(Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000, 700);
                     if (isDownloadTest) {
+                        b.speedView.speedTo(Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000000, 1500);
                         b.tvDownloadSpeed.setText(getString(R.string.string_string, "Download: ", Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000 + "Kbps"));
                     } else {
+                        Log.e(TAG, "onProgress: upload");
+                        b.speedView.speedTo(Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000000, 6000);
                         b.tvUpSpeed.setText(getString(R.string.string_string, "Upload:   ", Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000 + "Kbps"));
                     }
 

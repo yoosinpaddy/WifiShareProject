@@ -52,6 +52,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.model.WifiModel;
+import com.trichain.wifishare.util.CheckConnectivity;
 import com.trichain.wifishare.util.util;
 
 import java.util.List;
@@ -119,6 +120,10 @@ public class MapsActivity extends WifiBaseActivity implements OnMapReadyCallback
 
         mMap.setOnMarkerClickListener(marker -> {
             WifiModel m = (WifiModel) marker.getTag();
+            if (CheckConnectivity.getWiFiName(MapsActivity.this).toLowerCase().replace("\"","").contentEquals(m.getSsid().toLowerCase().replace("\"",""))){
+                Toast.makeText(this, "You are already connected to this network", Toast.LENGTH_SHORT).show();
+                return true;
+            }
             Log.e(TAG, "onMapReady: clicked " + m.getSsid());
 
             new AlertDialog.Builder(MapsActivity.this)

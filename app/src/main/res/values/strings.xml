@@ -256,6 +256,42 @@
         <item>Zimbabwe</item>
     </string-array>
     <string name="title_activity_maps">WiFi Near You</string>
+    <string name="how_to">WiFi Master is an essential tool for Android smart phone users to search for, connect with and manage their WiFi access. Millions of WiFi hotspots are available worldwide. \n\n
+        How does WiFi Master work? \n1.Launch WiFi Master on your Android smartphone \n2.Go to the Connect tab, tap on WiFi Key Search to search for available WiFi hotspots nearby \n3.Blue key hotspots are shared and can be connected for free \n\n
+        What are Blue Key Hotspots? Once an encrypted WiFi access is shared by its owner, a blue key icon will appear next to the hotspot. Blue Key Hotspots can be connected by retrieving secure encrypted passwords from our cloud database. \n\n
+        Try Auto Connect Auto Connect can be used to connect with the shared WiFi hotspots, saving your time of re-typing the passwords. As an owner, feel free to share the hotspot for fast and easy Auto Connect.\n\n
+        Why does it require mobile data? WiFi Master requires minimal mobile data to perform WiFi Key Search, hence to obtain the secure encrypted passwords from our cloud database and to get you connected. Only 10-15KB data will be used for every WiFi Key Search performed. \n\n
+        Do I need to pay to use WiFi? WiFi Master is completely free to use. On top of that, we will organize contests from time to time. Keep an eye on our contests and stand a chance to win big prizes.\n\n
+        Personal Information When you visit our website and/or use our application, we will collect, use and process your personal information such as your mobile phone number, your IP-address, the duration of a visit/session to enable us to deliver the functionalities of the website and our application.
+        If you wish to withdraw your consent to our use of your personal information, request access and/or correction of your personal information, have any queries, comments or concerns, please feel free to contact us (and our Data Protection Officer) at [dataprotectionofficer@wifi.com]. Follow us on: Facebook: fb.com/wifimasterkey LINE ID: wifimasterkey WeChat ID: wifimasterkeyglobal Data Protection Officer: dataprotectionofficer@wifi.com Email: help@wifi.com</string>
+    <string name="fail_to">No hotspot found\n\n
+Please kindly check if there\'s hotspot in the system\'s WiFi list. If yes,
+\n1.Please uninstall WiFi Master from your current device
+\n2.Upon re-installation, please allow WiFi Master to use the device\'s location
+\n3.After re-installation, you will see the WiFi list after tapping "WiFi Key Search"\n\n
+Fail to connect with blue key hotspot\n
+The following reasons may contribute to the failure of connection:\n
+\n1.The password has been updated by the hotspot owner without sharing
+\n2.Too many devices are connected concurrently, please try again later
+\n3.Weak/unstable signal\n\n
+Authentication required after connected\n
+Certain WiFi hotspots require their users to go through their authentication webpage before browsing the Internet. Please follow the instruction and complete the authentication step.\n\n
+Internet not available after connected, I cannot browse websites\n
+You may not be able to surf the Internet because of the following reasons:\n
+\n1.The router connected is offline, i.e. it\'s not connected with cable
+\n2.The WiFi connection is out of credit and needs to be topped up
+\n3.Weak/unstable signal\n\n
+Why can\'t I crack the WiFi password?\n
+WiFi Master is not a cracking tool, and please note that hacking is illegal. We would like to build a sharing community, hence everyone can get connected anywhere, any time.\n\n
+Failed to connect because of other reasons\n
+Please let us know the issue by filling up the feedback form, we will get back to you ASAP.</string>
+    <string name="hotspot">1.For the good of all users to enjoy free and fast WiFi connection, you can share the hotspot\n
+2.Note that all shared passwords will be transmitted and stored at our cloud database with 128 bits encryption\n
+3.For data security &amp; protection purposes, encrypted data will be deleted after successful connection\n\n
+How can I share the hotspot?\n
+Select the WiFi hotspot from the list, and tap on "Share Hotspot". You would need to type in the password again to complete the sharing.\n\n
+Can I stop sharing?\n
+Absolutely. All password sharing will only be performed with your prior consent. You can turn off sharing any time when you don\'t feel like.</string>
 
 
 </resources>

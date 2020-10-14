@@ -110,12 +110,21 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
             h.tvConnectionStatus.setText("Connected");
             util.hideView(h.fabConnect, false);
             util.showView(h.imgConnectionStatus, false);
+            h.itemView.setOnClickListener(v -> {
+                Toast.makeText(c, "You are already connected to this network", Toast.LENGTH_SHORT).show();
+                //wiFiSelectionListener.onWiFiSelected(w, position);
+            });
         } else {
             util.showView(h.fabConnect, false);
             util.hideView(h.imgConnectionStatus, false);
             h.tvConnectionStatus.setText("");
 
             h.fabConnect.setOnClickListener(v -> connect(w));
+
+            h.itemView.setOnClickListener(v -> {
+                connect(w);
+                //wiFiSelectionListener.onWiFiSelected(w, position);
+            });
 
         }
         if (w.isSecured()) {
@@ -142,10 +151,6 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
             showMenu(h, w);
         });
 
-        h.itemView.setOnClickListener(v -> {
-            connect(w);
-            //wiFiSelectionListener.onWiFiSelected(w, position);
-        });
 
     }
 
