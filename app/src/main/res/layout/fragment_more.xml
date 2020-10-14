@@ -35,7 +35,7 @@
                 app:title="Login" />
 
             <com.mikhaellopez.circularimageview.CircularImageView
-                android:id="@+id/image"
+                android:id="@+id/imgLogin"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
@@ -285,7 +285,7 @@
                                 android:orientation="vertical">
 
                                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                                    android:id="@+id/fabUpdate"
+                                    android:id="@+id/fabSettings"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:clickable="true"
@@ -313,6 +313,7 @@
                                 android:orientation="vertical">
 
                                 <com.google.android.material.floatingactionbutton.FloatingActionButton
+                                    android:id="@+id/fabUpdate"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:clickable="true"

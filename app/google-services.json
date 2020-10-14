@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1070989070355-j1bn9k0n3opi7b91qlgatqhstkg1p2k3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trichain.wifishare",
+            "certificate_hash": "26bba289be8420f586f1e04ac161275011eb3eb0"
+          }
+        },
+        {
           "client_id": "1070989070355-8ghe5fv1465c9btvmpck6a0j271poq1t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

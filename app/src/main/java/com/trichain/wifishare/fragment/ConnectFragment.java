@@ -477,6 +477,7 @@ public class ConnectFragment extends Fragment implements WifiBaseActivity.WiFiCo
     }
 
     private void startRunnables() {
+        b.srlMain.setRefreshing(true);
         stopRunnables();
         if (!checkGPSEnabled()) {
             b.srlMain.setRefreshing(false);

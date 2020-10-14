@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import com.github.anastr.speedviewlib.Speedometer;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.databinding.ActivitySpeedCheckBinding;
 import com.trichain.wifishare.util.AppExecutors;
@@ -19,6 +20,7 @@ import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.SpeedTestSocket;
 import fr.bmartel.speedtest.inter.ISpeedTestListener;
 import fr.bmartel.speedtest.model.SpeedTestError;
+import fr.bmartel.speedtest.utils.SpeedTestUtils;
 
 public class SpeedCheckActivity extends AppCompatActivity {
 
@@ -44,6 +46,8 @@ public class SpeedCheckActivity extends AppCompatActivity {
         b.tvWiFiNameSpeed.setText(CheckConnectivity.getWiFiName(this).replace("\"",""));
         b.tvDownloadSpeed.setText(getString(R.string.string_string, "Download: ", "0Kbps"));
         b.tvUpSpeed.setText(getString(R.string.string_string, "Upload:   ", "0Kbps"));
+        b.speedView.setSpeedometerMode(Speedometer.Mode.NORMAL);
+        b.speedView.setWithTremble(false);
 
         // add a listener to wait for speedtest completion and progress
         speedTestSocket.addSpeedTestListener(new ISpeedTestListener() {
@@ -86,11 +90,11 @@ public class SpeedCheckActivity extends AppCompatActivity {
                 System.out.println("[PROGRESS] progress : " + percent + "%");
                 appExecutors.mainThread().execute(() -> {
                     if (isDownloadTest) {
-                        b.speedView.speedTo(Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000000, 1500);
+                        b.speedView.speedTo(Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000000, 1000);
                         b.tvDownloadSpeed.setText(getString(R.string.string_string, "Download: ", Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000 + "Kbps"));
                     } else {
                         Log.e(TAG, "onProgress: upload");
-                        b.speedView.speedTo(Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000000, 6000);
+                        b.speedView.speedTo(Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000000, 1000);
                         b.tvUpSpeed.setText(getString(R.string.string_string, "Upload:   ", Float.parseFloat(String.valueOf(report.getTransferRateBit().toBigInteger())) / 1000 + "Kbps"));
                     }
 
@@ -115,7 +119,9 @@ public class SpeedCheckActivity extends AppCompatActivity {
         Log.e(TAG, "testUploadSpeed: Attempting to start upload ");
 
         appExecutors.networkIO().execute(() -> {
-            speedTestSocket.startUpload("http://ipv4.ikoula.testdebit.info/", 1000000);
+            String fileName = SpeedTestUtils.generateFileName() + ".txt";
+            speedTestSocket.startFixedUpload("ftp://speedtest.tele2.net/upload/" + fileName, 10000000, 18000);
+            //speedTestSocket.startUpload("http://ipv4.ikoula.testdebit.info/", 1000000);
         });
     }
 

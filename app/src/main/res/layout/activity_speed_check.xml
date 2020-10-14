@@ -24,10 +24,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <com.github.anastr.speedviewlib.SpeedView
+        <com.github.anastr.speedviewlib.PointerSpeedometer
             android:id="@+id/speedView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:sv_centerCircleColor="@color/white"
+            app:sv_backgroundCircleColor="@color/colorPrimary"
             android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

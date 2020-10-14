@@ -18,6 +18,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -42,6 +43,7 @@ import com.trichain.wifishare.R;
 import com.trichain.wifishare.listeners.ScanResultsInterface;
 import com.trichain.wifishare.model.WifiModel;
 import com.trichain.wifishare.util.CheckConnectivity;
+import com.trichain.wifishare.util.SharedPrefsManager;
 
 import java.util.List;
 import java.util.UUID;
@@ -72,6 +74,7 @@ public class WifiBaseActivity extends AppCompatActivity {
     public interface WiFiConnectionListener {
         void onWiFiStatusChanged(Boolean isWiFiOn);
     }
+    boolean isOnline;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,7 +85,19 @@ public class WifiBaseActivity extends AppCompatActivity {
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiManager = mWifiManager;
         ref = FirebaseDatabase.getInstance().getReference().child(WIFI_ROOT);
-        createNotification();
+
+        createNotification(SharedPrefsManager.getInstance(WifiBaseActivity.this).shouldShowIcon());
+        isOnline=CheckConnectivity.isOnline(WifiBaseActivity.this);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isOnline!=CheckConnectivity.isOnline(WifiBaseActivity.this)){
+                    createNotification(CheckConnectivity.isOnline(WifiBaseActivity.this));
+                    isOnline=CheckConnectivity.isOnline(WifiBaseActivity.this);
+                }
+                new Handler().postDelayed(this,1000);
+            }
+        },1000);
     }
 
     public boolean isWifiOn() {
@@ -389,6 +404,72 @@ public class WifiBaseActivity extends AppCompatActivity {
 
         notificationManager.notify(notificationId, builder.build());
 
+    }
+
+    public void createNotification(boolean show) {
+
+        String wifi_name = CheckConnectivity.getWiFiName(this);
+        String strengthStr = "";
+        int strength = 100 + CheckConnectivity.getSingleWiFiSignalStrength(this);
+
+        if (isBetween(strength, 0, 25)) {
+            strengthStr = "Poor";
+        } else if (isBetween(strength, 26, 50)) {
+            strengthStr = "Weak";
+        } else if (isBetween(strength, 51, 75)) {
+            strengthStr = "Good";
+        } else {
+            strengthStr = "Excellent";
+        }
+
+        Log.e(TAG, "createNotification: STRENGTH INT: " + strength);
+        Log.e(TAG, "createNotification: STRENGTH: " + strengthStr);
+
+        RemoteViews collapseView = new RemoteViews(getPackageName(), R.layout.notification_layout);
+        collapseView.setImageViewResource(R.id.notifiction_icon, R.mipmap.ic_launcher_round);
+        collapseView.setTextViewText(R.id.notification_title, "Connected To: " + wifi_name);
+        collapseView.setTextViewText(R.id.notification_message, "Network Latency: " + strengthStr);
+
+        Intent intent2 = new Intent(this, SecurityCheckActivity.class);
+        PendingIntent pendingIntent2 = PendingIntent.getActivity(this, 0, intent2, 0);
+        collapseView.setOnClickPendingIntent(R.id.notification_security, pendingIntent2);
+        if (!CheckConnectivity.isOnline(WifiBaseActivity.this)){
+            collapseView.setTextViewText(R.id.notification_title, "Not connected");
+            collapseView.setTextViewText(R.id.notification_message, "" );
+            collapseView.setTextViewText(R.id.notification_security, "Connect" );
+            Intent intent3 = new Intent(this, HomeActivity.class);
+            PendingIntent pendingIntent3= PendingIntent.getActivity(this, 0, intent3, 0);
+            collapseView.setOnClickPendingIntent(R.id.notification_security, pendingIntent3);
+        }
+
+
+        int notificationId = 0;
+        Intent intent = new Intent(this, HomeActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "WIFI_NOTIFICATION")
+                .setContent(collapseView)
+                .setContentIntent(pendingIntent)
+                .setCustomContentView(collapseView)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSound(null)
+                .setAutoCancel(true)
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = "WIFI_NOTIFICATION";
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "Package_Ready",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+            builder.setChannelId(channelId);
+        }
+        notificationManager.cancelAll();
+        if (show) {
+            notificationManager.notify(notificationId, builder.build());
+        }
     }
 
     public static boolean isBetween(int x, int lower, int upper) {
