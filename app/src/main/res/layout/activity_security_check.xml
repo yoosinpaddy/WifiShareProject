@@ -16,7 +16,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:context=".activity.SecurityCheckActivity">
 
-            <com.trichain.wifishare.views.CircleProgressView
+            <com.passowrd.key.wifishare.views.CircleProgressView
                 android:id="@+id/progressSecurity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

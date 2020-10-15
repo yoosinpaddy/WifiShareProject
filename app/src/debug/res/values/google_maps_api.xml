@@ -4,12 +4,12 @@
 
     To get one, follow this link, follow the directions and press "Create" at the end:
 
-    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=7A:17:CE:72:A4:4A:34:0F:47:09:C5:5A:91:40:46:E5:A9:A4:4F:F5%3Bcom.trichain.wifishare.activity
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=7A:17:CE:72:A4:4A:34:0F:47:09:C5:5A:91:40:46:E5:A9:A4:4F:F5%3Bcom.passowrd.key.wifishare.activity
 
     You can also add your credentials to an existing key, using these values:
 
     Package name:
-    com.trichain.wifishare.activity
+    com.passowrd.key.wifishare.activity
 
     SHA-1 certificate fingerprint:
     7A:17:CE:72:A4:4A:34:0F:47:09:C5:5A:91:40:46:E5:A9:A4:4F:F5

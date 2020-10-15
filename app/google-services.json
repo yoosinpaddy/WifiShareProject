@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1070989070355:android:29d133702ed068a1202fe6",
         "android_client_info": {
-          "package_name": "com.trichain.wifishare"
+          "package_name": "com.passowrd.key.wifishare"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "1070989070355-j1bn9k0n3opi7b91qlgatqhstkg1p2k3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.trichain.wifishare",
+            "package_name": "com.passowrd.key.wifishare",
             "certificate_hash": "26bba289be8420f586f1e04ac161275011eb3eb0"
           }
         },
@@ -26,7 +26,7 @@
           "client_id": "1070989070355-8ghe5fv1465c9btvmpck6a0j271poq1t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.trichain.wifishare",
+            "package_name": "com.passowrd.key.wifishare",
             "certificate_hash": "7a17ce72a44a340f4709c55a914046e5a9a44ff5"
           }
         },

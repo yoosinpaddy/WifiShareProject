@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.trichain.wifishare">
+    package="com.passowrd.key.wifishare">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -20,11 +20,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.CancelSharingActivity"></activity>
-        <activity android:name=".activity.SettingsActivity" />
-        <activity android:name=".activity.SigninnActivity" />
-        <activity android:name=".activity.InstructionsActivity" />
-        <activity android:name=".activity.FeedbackActivity" />
+        <activity android:name="com.passowrd.key.wifishare.activity.CancelSharingActivity"></activity>
+        <activity android:name="com.passowrd.key.wifishare.activity.SettingsActivity" />
+        <activity android:name="com.passowrd.key.wifishare.activity.SigninnActivity" />
+        <activity android:name="com.passowrd.key.wifishare.activity.InstructionsActivity" />
+        <activity android:name="com.passowrd.key.wifishare.activity.FeedbackActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -38,24 +38,24 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.MapsActivity"
+            android:name="com.passowrd.key.wifishare.activity.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".activity.SecurityCheckActivity" />
+        <activity android:name="com.passowrd.key.wifishare.activity.SecurityCheckActivity" />
         <activity
-            android:name=".activity.CountrySelectActivity"
+            android:name="com.passowrd.key.wifishare.activity.CountrySelectActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".tests.MyTests" />
-        <activity android:name=".activity.HomeActivity">
+        <activity android:name="com.passowrd.key.wifishare.tests.MyTests" />
+        <activity android:name="com.passowrd.key.wifishare.activity.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".room.RoomActivity" />
-        <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.SpeedCheckActivity" />
-        <activity android:name=".activity.SignalCheckActivity" />
+        <activity android:name="com.passowrd.key.wifishare.room.RoomActivity" />
+        <activity android:name="com.passowrd.key.wifishare.activity.MainActivity" />
+        <activity android:name="com.passowrd.key.wifishare.activity.SpeedCheckActivity" />
+        <activity android:name="com.passowrd.key.wifishare.activity.SignalCheckActivity" />
     </application>
 
 </manifest>
