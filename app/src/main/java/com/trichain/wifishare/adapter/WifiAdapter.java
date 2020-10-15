@@ -47,6 +47,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.trichain.wifishare.R;
 import com.trichain.wifishare.activity.HomeActivity;
+import com.trichain.wifishare.activity.SecurityCheckActivity;
 import com.trichain.wifishare.activity.SignalCheckActivity;
 import com.trichain.wifishare.activity.SpeedCheckActivity;
 import com.trichain.wifishare.model.WifiModel;
@@ -183,7 +184,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.WifiAdapterVie
         (view.findViewById(R.id.fabSecurity)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(c, Security.class);
+                Intent i = new Intent(c, SecurityCheckActivity.class);
                 c.startActivity(i);
             }
         });
