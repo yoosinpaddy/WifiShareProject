@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-    <data/>
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -10,40 +8,44 @@
         android:orientation="vertical"
         android:padding="16dp"
         tools:context=".activity.SettingsActivity">
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Rules"
-    android:textColor="@color/blue_600"
-    android:textAllCaps="true"/>
-        <Switch
-            android:id="@+id/statusBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Show icon on Status Bar"
-            android:drawableTint="@color/blue_600"
-            android:layout_marginTop="10dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Reminder"
-            android:textColor="@color/blue_600"
+            android:text="Rules"
+            android:textAllCaps="true"
+            android:textColor="@color/blue_600" />
+
+        <Switch
+            android:id="@+id/statusBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawableTint="@color/blue_600"
+            android:text="Show icon on Status Bar" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:textAllCaps="true"/>
+            android:text="Reminder"
+            android:textAllCaps="true"
+            android:textColor="@color/blue_600" />
+
         <Switch
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New version notification"
+            android:layout_marginTop="10dp"
             android:checked="true"
             android:drawableTint="@color/blue_600"
-            android:layout_marginTop="10dp"/>
+            android:text="New version notification" />
+
         <Switch
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="safety Test"
+            android:layout_marginTop="10dp"
             android:checked="true"
             android:drawableTint="@color/blue_600"
-            android:layout_marginTop="10dp"/>
+            android:text="safety Test" />
     </LinearLayout>
 </layout>

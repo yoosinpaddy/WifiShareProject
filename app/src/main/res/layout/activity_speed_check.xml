@@ -13,37 +13,74 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:textSize="24sp"
             android:drawableStart="@drawable/ic_signal"
             android:drawablePadding="8dp"
             android:text="WiFi Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            app:layout_constraintBottom_toTopOf="@id/speedView"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/llSpeed"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <com.github.anastr.speedviewlib.PointerSpeedometer
-            android:id="@+id/speedView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:sv_centerCircleColor="@color/white"
-            app:sv_backgroundCircleColor="@color/colorPrimary"
-            android:elevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:sv_maxSpeed="100"
-            app:sv_unit="Mbps" />
-
         <LinearLayout
+            android:id="@+id/llSpeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/llbottom"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tvWiFiNameSpeed">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Download" />
+
+            <com.github.anastr.speedviewlib.PointerSpeedometer
+                android:id="@+id/speedView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:elevation="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:sv_backgroundCircleColor="@color/colorPrimary"
+                app:sv_centerCircleColor="@color/white"
+                app:sv_maxSpeed="100"
+                app:sv_unit="Mbps" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Upload" />
+
+            <com.github.anastr.speedviewlib.PointerSpeedometer
+                android:id="@+id/speedViewUpload"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:elevation="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:sv_backgroundCircleColor="@color/colorPrimary"
+                app:sv_centerCircleColor="@color/white"
+                app:sv_maxSpeed="100"
+                app:sv_unit="Mbps" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llbottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:orientation="vertical"
             android:padding="16dp"
-            app:layout_constraintTop_toBottomOf="@id/speedView">
+            app:layout_constraintTop_toBottomOf="@id/llSpeed">
 
             <TextView
                 android:id="@+id/tvDownloadSpeed"
